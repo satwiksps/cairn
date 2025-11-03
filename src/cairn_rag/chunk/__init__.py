@@ -1,0 +1,77 @@
+"""Pure, model-independent text chunking."""
+
+from cairn_rag.chunk.cdc import (
+    CDCChunker,
+    RabinRollingHash,
+    boundary_positions,
+    chunk_stream,
+    chunk_text,
+    rolling_fingerprints,
+)
+from cairn_rag.chunk.params import CHUNKER_ID, CDCParams, ChunkerParams
+from cairn_rag.chunk.snap import SnapResult, snap_boundary, snap_boundary_details
+from cairn_rag.chunk.strategies import (
+    STRATEGIES,
+    FixedChunker,
+    RecursiveChunker,
+    SemanticChunker,
+    chunker_from_config,
+    create_chunker,
+    fixed_chunks,
+    lexical_similarity,
+    recursive_chunks,
+    semantic_chunks,
+)
+from cairn_rag.chunk.stream import (
+    DEFAULT_TOKENIZER_ID,
+    NORMALIZER_VERSION,
+    PARAGRAPH_MARKER,
+    NormalizedStream,
+    NormalizedWord,
+    StreamItem,
+    build_stream,
+    default_token_count,
+    normalize_stream,
+    normalize_text,
+    resolve_tokenizer_id,
+)
+from cairn_rag.models import Chunk, ChunkingResult, ChunkingStats
+
+__all__ = [
+    "CHUNKER_ID",
+    "DEFAULT_TOKENIZER_ID",
+    "NORMALIZER_VERSION",
+    "PARAGRAPH_MARKER",
+    "STRATEGIES",
+    "CDCChunker",
+    "CDCParams",
+    "Chunk",
+    "ChunkerParams",
+    "ChunkingResult",
+    "ChunkingStats",
+    "FixedChunker",
+    "NormalizedStream",
+    "NormalizedWord",
+    "RabinRollingHash",
+    "RecursiveChunker",
+    "SemanticChunker",
+    "SnapResult",
+    "StreamItem",
+    "boundary_positions",
+    "build_stream",
+    "chunk_stream",
+    "chunk_text",
+    "chunker_from_config",
+    "create_chunker",
+    "default_token_count",
+    "fixed_chunks",
+    "lexical_similarity",
+    "normalize_stream",
+    "normalize_text",
+    "recursive_chunks",
+    "rolling_fingerprints",
+    "resolve_tokenizer_id",
+    "semantic_chunks",
+    "snap_boundary",
+    "snap_boundary_details",
+]
