@@ -1,0 +1,66 @@
+name: Feature request
+description: Propose a focused improvement to Cairn.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before filing
+      options:
+        - label: I searched existing issues and discussions for similar proposals.
+          required: true
+        - label: I have described a problem or use case, not only a preferred implementation.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Who needs this, for what workflow, and what currently prevents it?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe observable behavior, including CLI or API examples where useful.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Primary area
+      options:
+        - Chunking and normalization
+        - Content identity and manifests
+        - Planning and migration
+        - Embedding provider
+        - Vector adapter
+        - Cache and persistence
+        - Measurement and reporting
+        - CLI, configuration, or documentation
+    validations:
+      required: true
+
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility and evidence
+      description: Could this alter chunk hashes, cache keys, manifests, locality, churn, retrieval quality, or deletion guarantees?
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Describe workarounds or competing designs and their tradeoffs.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I may be able to help implement or test this proposal.

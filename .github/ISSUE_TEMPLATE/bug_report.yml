@@ -1,0 +1,77 @@
+name: Bug report
+description: Report reproducible incorrect behavior in Cairn.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Cairn. Remove secrets and private source content from all examples and logs.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before filing
+      options:
+        - label: I searched existing issues and did not find this report.
+          required: true
+        - label: I can reproduce this with a supported Python version.
+          required: true
+        - label: This is not a security vulnerability (security reports follow SECURITY.md).
+          required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Cairn version
+      description: Output of `cairn-rag --version`, installed package version, or commit SHA.
+      placeholder: 0.1.0 or commit SHA
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Python version, and installation method.
+      placeholder: Ubuntu 24.04, Python 3.12, pip editable install
+    validations:
+      required: true
+
+  - type: input
+    id: integration
+    attributes:
+      label: Provider or backend
+      description: Name and version, if the problem involves an optional adapter.
+      placeholder: Local hash demo / SQLite, or not applicable
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest safe input, configuration, and command or code that reproduces the issue.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: Relevant output
+      description: Paste redacted traceback or logs. Do not include credentials, source documents, or complete embeddings.
+      render: text
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Note regressions, workarounds, frequency, and identity/manifest impact.
