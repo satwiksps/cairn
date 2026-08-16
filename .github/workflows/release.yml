@@ -158,6 +158,7 @@ jobs:
       - name: Create or update release idempotently
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
           IS_PRERELEASE: ${{ needs.build.outputs.is_prerelease }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
