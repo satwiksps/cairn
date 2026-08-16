@@ -2,22 +2,6 @@ import type { SVGProps } from "react";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
-export function ArrowUpRightIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
-      <path d="M4 12 12 4M6 4h6v6" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-export function ArrowRightIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>
-      <path d="M2.5 8h10M9 4.5 12.5 8 9 11.5" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
 export function CheckIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" {...props}>

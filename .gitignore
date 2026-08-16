@@ -8,6 +8,7 @@ __pycache__/
 .hypothesis/
 .coverage
 .coverage.*
+coverage.xml
 htmlcov/
 
 # Environments

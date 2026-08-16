@@ -6,6 +6,16 @@ All notable changes to Cairn are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Codecov reporting with project and patch coverage checks.
+- Repository banner and reusable social card artwork.
+
+### Changed
+
+- Shortened website metadata and removed decorative arrow symbols from public pages.
+- Grouped Dependabot updates and ignored incompatible toolchain majors.
+
 ## [0.2.0] - 2026-08-16
 
 ### Added

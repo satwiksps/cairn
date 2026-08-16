@@ -42,7 +42,7 @@ export const packageUrl = "https://pypi.org/project/cairn-rag/";
 
 export const site = {
   name: "Cairn",
-  title: "Cairn — Incremental indexing for changing RAG corpora",
+  title: "Cairn",
   description:
     "Content-defined chunk identities, cache-aware planning, and transactional indexing for RAG corpora that change.",
   version: "v0.2.0",

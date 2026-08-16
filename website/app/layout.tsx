@@ -40,10 +40,10 @@ export const metadata: Metadata = {
         siteName: site.name,
         images: [
           {
-            url: "/social-card",
-            width: 1200,
-            height: 630,
-            alt: "Cairn — incremental indexing for changing RAG corpora",
+            url: "/cairn-social-card.jpg",
+            width: 1732,
+            height: 908,
+            alt: "Cairn social card",
           },
         ],
       }
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: site.title,
         description: site.description,
-        images: ["/social-card"],
+        images: ["/cairn-social-card.jpg"],
       }
     : undefined,
 };

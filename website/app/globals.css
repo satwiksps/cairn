@@ -615,9 +615,9 @@ pre {
   background: rgba(140, 232, 179, 0.045);
 }
 
-.flow-arrow {
-  color: #46504a;
-  font-family: var(--font-geist-mono), monospace;
+.flow-connector {
+  width: 24px;
+  border-top: 1px solid #46504a;
 }
 
 .architecture-steps {
@@ -871,7 +871,8 @@ pre {
     grid-template-columns: 1fr;
   }
 
-  .flow-arrow {
+  .flow-connector {
+    width: 24px;
     transform: rotate(90deg);
     justify-self: center;
   }

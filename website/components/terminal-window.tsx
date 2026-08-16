@@ -65,7 +65,7 @@ export function TerminalWindow() {
           <span className="prompt">$</span> cairn-rag index --allow-delete
         </div>
         <div className="terminal-output">
-          Applied <span>190 active</span> · embedded <span>2</span> · tombstoned <span>1</span>
+          Applied <span>190 active</span>, embedded <span>2</span>, tombstoned <span>1</span>
         </div>
 
         <div className="terminal-command terminal-command-spaced">

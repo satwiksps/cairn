@@ -48,7 +48,7 @@ Run these from the repository root before opening a pull request:
 python -m ruff check .
 python -m ruff format --check .
 python -m mypy src/cairn_rag
-python -m pytest
+python -m pytest --cov=cairn_rag --cov-branch --cov-report=term-missing
 python -m build
 ```
 

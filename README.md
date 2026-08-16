@@ -1,4 +1,14 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/satwiksps/cairn/main/assets/cairn-banner.svg" alt="Cairn" width="100%">
+</p>
+
 # Cairn
+
+[![CI](https://github.com/satwiksps/cairn/actions/workflows/ci.yml/badge.svg)](https://github.com/satwiksps/cairn/actions/workflows/ci.yml)
+[![Codecov](https://codecov.io/gh/satwiksps/cairn/graph/badge.svg)](https://codecov.io/gh/satwiksps/cairn)
+[![PyPI](https://img.shields.io/pypi/v/cairn-rag)](https://pypi.org/project/cairn-rag/)
+[![Python](https://img.shields.io/pypi/pyversions/cairn-rag)](https://pypi.org/project/cairn-rag/)
+[![License](https://img.shields.io/github/license/satwiksps/cairn)](LICENSE)
 
 > Cairn reuses unchanged RAG chunks with content-defined identities, cache-aware planning, and transactional indexing.
 

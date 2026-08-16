@@ -210,7 +210,7 @@ def _verify(args: argparse.Namespace, console: Console) -> int:
     else:
         console.print("[red]Verification failed[/red]")
         for problem in problems:
-            console.print(Text(f"  • {problem}"))
+            console.print(Text(f"  - {problem}"))
     return int(ExitCode.SUCCESS if valid else ExitCode.VERIFICATION_MISMATCH)
 
 

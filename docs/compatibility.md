@@ -27,7 +27,7 @@ Manifests and SQLite state carry explicit schema versions. Unsupported versions 
 
 ## CLI and Python surfaces
 
-The documented top-level Python exports—`CDCChunker`, `CDCParams`, `Cache`, and `Chunk`—are the supported library surface. Internal modules may change.
+The documented top-level Python exports are `CDCChunker`, `CDCParams`, `Cache`, and `Chunk`. These exports are the supported library surface. Internal modules may change.
 
 Documented CLI commands, exit codes, and existing JSON fields remain compatible within a minor release. Compatible releases may add JSON fields; consumers must ignore fields they do not recognize. A removal or meaning change requires release notes and a versioned migration path where persisted state is affected.
 
