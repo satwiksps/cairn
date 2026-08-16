@@ -1,18 +1,17 @@
 # Release checklist
 
-Cairn's code and distributions can be built locally, but public publishing is intentionally gated. Do not set the repository variable `CAIRN_RELEASE_ENABLED=true` until every owner-specific item below is complete.
+Use this checklist for every public release. Do not set `CAIRN_RELEASE_ENABLED=true` until the PyPI publisher and release metadata are ready.
 
 ## Ownership and namespace
 
-- Reserve the `cairn-rag` distribution name under the intended PyPI organization. The unrelated `cairn` distribution, module, and command are already occupied.
-- Add the accountable maintainer or organization to package metadata and `CITATION.cff`.
-- Choose the production website domain, configure Vercel with `website/` as its root, and set `NEXT_PUBLIC_SITE_URL` to the real HTTPS URL.
+- Confirm the `cairn-rag` PyPI project and trusted publisher configuration.
+- Confirm the version and maintainer metadata in `pyproject.toml`, `CHANGELOG.md`, and `CITATION.cff`.
+- Confirm the production website URL and repository links.
 
 ## Security and governance
 
-- Enable GitHub private vulnerability reporting.
-- Replace the fallback profile instruction in `SECURITY.md` with a monitored private security address or form.
-- Name a private Code of Conduct enforcement contact.
+- Confirm GitHub private vulnerability reporting is enabled.
+- Confirm `SECURITY.md` and `CODE_OF_CONDUCT.md` name monitored private contacts.
 - Confirm that the Apache-2.0 copyright notice names the intended owner.
 
 ## Evidence

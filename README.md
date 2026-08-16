@@ -35,25 +35,27 @@ Sentence/paragraph boundary snapping is experimental and opt-in. It needs both e
 
 Cairn requires Python 3.10 or newer.
 
-Until the first public release is published, install Cairn from a source checkout:
-
-```bash
-python -m pip install -e .
-```
-
-For contributor tooling, use the development extra instead:
-
-```bash
-python -m pip install -e ".[dev]"
-```
-
-After the first public release, the distribution install will be:
+Install the latest published release:
 
 ```bash
 python -m pip install cairn-rag
 ```
 
-Publishing remains deliberately gated until an owner reserves the PyPI namespace and supplies a private security contact; see the [release checklist](https://github.com/satwiksps/cairn/blob/main/docs/release-checklist.md).
+For an isolated command-line installation, use `pipx`:
+
+```bash
+pipx install cairn-rag
+```
+
+For development, install from a source checkout:
+
+```bash
+git clone https://github.com/satwiksps/cairn.git
+cd cairn
+python -m pip install -e ".[dev]"
+```
+
+Releases are built and published by the tag-triggered workflow described in the [release checklist](https://github.com/satwiksps/cairn/blob/main/docs/release-checklist.md).
 
 Provider SDKs are optional and do not load with the core package. From a source checkout:
 
