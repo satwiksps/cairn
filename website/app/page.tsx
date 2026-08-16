@@ -10,7 +10,7 @@ import {
 } from "@/components/icons";
 import { SiteHeader } from "@/components/site-header";
 import { TerminalWindow } from "@/components/terminal-window";
-import { repositoryUrl } from "@/lib/site";
+import { packageUrl, repositoryUrl } from "@/lib/site";
 
 const capabilities = [
   {
@@ -89,10 +89,14 @@ export default function Home() {
               </div>
               <div className="install-line" aria-label="Installation command">
                 <span className="prompt">$</span>
-                <code>python -m pip install -e .</code>
+                <code>python -m pip install cairn-rag</code>
               </div>
               <p className="release-note">
-                From a source checkout. The first public package release is pending.
+                Version 0.1.0 is available on{" "}
+                <a href={packageUrl} target="_blank" rel="noopener noreferrer">
+                  PyPI
+                </a>
+                .
               </p>
             </div>
 
@@ -318,6 +322,14 @@ export default function Home() {
                 <GitHubIcon className="h-4 w-4" /> View on GitHub
               </a>
             ) : null}
+            <a
+              href={packageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="secondary-button"
+            >
+              View on PyPI <ArrowUpRightIcon className="h-4 w-4" />
+            </a>
           </div>
         </section>
       </main>
@@ -336,6 +348,9 @@ export default function Home() {
                 Source <ArrowUpRightIcon className="inline h-3.5 w-3.5" />
               </a>
             ) : null}
+            <a href={packageUrl} target="_blank" rel="noopener noreferrer">
+              PyPI <ArrowUpRightIcon className="inline h-3.5 w-3.5" />
+            </a>
             <span>Apache License 2.0</span>
           </div>
         </div>

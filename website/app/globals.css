@@ -275,6 +275,12 @@ pre {
   font-size: 11px;
 }
 
+.release-note a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .terminal-frame {
   position: relative;
   margin: 0;
