@@ -2,14 +2,13 @@
 
 > Cairn reuses unchanged RAG chunks with content-defined identities, cache-aware planning, and transactional indexing.
 
-Cairn is an early-stage Python toolkit for stable, incremental retrieval-augmented generation (RAG) indexing. It combines content-defined chunking, content-addressed identities, and a dry-run planner so a small edit can be represented as a small set of index operations.
+Cairn is a Python toolkit for stable, incremental retrieval-augmented generation (RAG) indexing. It combines content-defined chunking, content-addressed identities, and a dry-run planner so a small edit can be represented as a small set of index operations.
 
 The distribution, Python module, and command are `cairn-rag`, `cairn_rag`, and `cairn-rag`. The distinct public namespace avoids collisions with the unrelated [existing `cairn` project on PyPI](https://pypi.org/project/cairn/), which already owns both the `cairn` module and command.
 
-> [!IMPORTANT]
-> Cairn is alpha software. Its chunk-identity schema is not frozen, retrieval quality has not yet been established, and the benchmark results described in the project specification have not yet been reproduced. The current TTTD boundary selector also does not satisfy the draft's proposed fixed-margin locality guarantee in all cases. Do not base production cost or quality decisions on projected results.
+The v1 chunk-identity schema is compatibility-stable and protected by golden-vector tests. Built-in five-corpus benchmarks publish churn and retrieval baselines for every bundled chunking strategy. The default offline provider performs lexical retrieval; select a learned provider when queries require semantic similarity.
 
-The workspace's `cairn-project-spec.md` is preserved as historical design input and excluded from release artifacts. Where it conflicts with the implemented tests and maintained documentation—notably on strict TTTD locality—the latter describe the current alpha behavior.
+The workspace's `cairn-project-spec.md` is historical design input and is excluded from release artifacts. Maintained documentation, tests, and measured results define the supported behavior.
 
 ## Why Cairn exists
 
@@ -19,17 +18,19 @@ Cairn's default `cdc-rabin` strategy places candidate boundaries from a rolling 
 
 Cairn is deliberately a library and planner, not a RAG framework. The intended integration point is below orchestration libraries and above embedding/vector providers.
 
-## Status
+## Supported scope
 
-The current alpha is focused on proving the mechanism:
+The reference path is implemented end to end:
 
 - deterministic normalized-word chunking with Rabin content-defined boundaries;
 - content-addressed chunks and embedding-cache keys;
 - manifests, Merkle roots, and explicit change plans;
 - a local CLI, SQLite index, and SQLite embedding cache;
-- empirical boundary-stability checks, randomized chunking regressions, and cross-run determinism tests.
+- migration with preview, recovery, and rollback;
+- versioned churn and retrieval regressions across five built-in corpora;
+- cross-platform determinism, adapter, crash-recovery, deletion, and query tests.
 
-Sentence/paragraph boundary snapping is experimental and opt-in. It needs both empirical validation and project-specific patent review before broader use.
+Sentence/paragraph snapping remains opt-in because it needs project-specific legal review. The default unsnapped strategy does not depend on it.
 
 ## Installation
 
@@ -82,7 +83,7 @@ With no explicit paths, `cairn-rag plan` and `index` use the committed `[sources
 > [!CAUTION]
 > Paths passed to `plan` or `index` are the complete desired corpus for that run. Previously indexed documents omitted from that scope are planned as deletions. Prefer the committed `[sources]` globs and inspect `cairn-rag plan` before applying changes. `index` requires `--allow-delete` for a deleting plan and also requires `--allow-empty` before emptying a previously populated corpus.
 
-The generated starter configuration uses a deterministic hash embedder so the workflow can run offline. That embedder is test/demo infrastructure and is **not suitable for production retrieval or retrieval-quality evaluation**.
+The generated starter configuration uses deterministic unigram/bigram feature hashing. It works offline for exact-term and keyword retrieval but does not infer synonyms or semantic similarity. Use the OpenAI or sentence-transformers provider when semantic matching is required.
 
 See the [CLI reference](https://github.com/satwiksps/cairn/blob/main/docs/cli.md) before automating a workflow; in particular, positional paths describe a complete desired corpus rather than additions to the existing index.
 
@@ -101,7 +102,7 @@ for chunk in chunks:
 
 `load_config` performs file I/O at the application edge; the chunker receives the parsed object and remains independent of files, providers, and backends.
 
-The exact public API remains subject to change before 1.0.
+The documented top-level API and JSON outputs follow the [compatibility policy](https://github.com/satwiksps/cairn/blob/main/docs/compatibility.md). Chunk identity `cairn-chunk-identity-v1` will not change silently across package releases.
 
 ## Configuration
 
@@ -134,6 +135,8 @@ Changing normalization or chunking parameters changes chunk identity. Always run
 - [Backends and providers](https://github.com/satwiksps/cairn/blob/main/docs/backends-and-providers.md): the implemented support matrix and production caveats.
 - [Architecture](https://github.com/satwiksps/cairn/blob/main/docs/architecture.md): boundaries, identities, manifests, planning, and deletion.
 - [Chunking algorithm](https://github.com/satwiksps/cairn/blob/main/docs/algorithm.md): implemented Rabin/TTTD behavior and locality acceptance targets.
+- [Benchmarks](https://github.com/satwiksps/cairn/blob/main/docs/benchmarks.md): reproducible five-corpus churn and retrieval results.
+- [Compatibility](https://github.com/satwiksps/cairn/blob/main/docs/compatibility.md): stable identities, public surfaces, and migration rules.
 - [Known limitations](https://github.com/satwiksps/cairn/blob/main/docs/limitations.md): current correctness, quality, legal, and operational constraints.
 - [Adapter conformance](https://github.com/satwiksps/cairn/blob/main/docs/adapter-conformance.md): requirements for additional index backends.
 - [Release checklist](https://github.com/satwiksps/cairn/blob/main/docs/release-checklist.md): work intentionally required before public publishing.

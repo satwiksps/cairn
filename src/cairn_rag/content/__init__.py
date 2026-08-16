@@ -3,6 +3,7 @@
 from cairn_rag.content.hashing import (
     HASH_ALGORITHM,
     IDENTITY_SCHEMA_VERSION,
+    SUPPORTED_IDENTITY_SCHEMA_VERSIONS,
     canonical_json_hash,
     chunk_content_hash,
     chunk_hash,
@@ -31,6 +32,7 @@ __all__ = [
     "HASH_ALGORITHM",
     "IDENTITY_SCHEMA_VERSION",
     "MANIFEST_SCHEMA_VERSION",
+    "SUPPORTED_IDENTITY_SCHEMA_VERSIONS",
     "ChunkRecord",
     "CorpusManifest",
     "DocumentManifest",

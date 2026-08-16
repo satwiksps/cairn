@@ -1,14 +1,14 @@
 # Backends and embedding providers
 
-Cairn's current alpha has one local index backend and three embedding-provider adapters. "Included" means the adapter exists in this repository; it does not imply production certification or a live integration test in the default CI job.
+Cairn has one supported local index backend and three embedding-provider adapters. "Included" means the adapter exists in this repository; optional providers still require validation against the selected live service or model.
 
-Until the first public distribution is available, run the optional-extra installs below from a source checkout as `pip install -e ".[openai]"` or `pip install -e ".[sentence-transformers]"`.
+Install optional providers with `pip install "cairn-rag[openai]"` or `pip install "cairn-rag[sentence-transformers]"`.
 
 ## Index backend support
 
 | Backend | Install | Current status | Important boundaries |
 | --- | --- | --- | --- |
-| SQLite | Core package | Alpha, implemented and unit-tested | One logical index per database file; local transactional snapshot apply, active-record filtering, tombstones, brute-force vector queries, verification, and compaction. No collection namespaces, alias swaps, remote service, replication, or high-availability claim. |
+| SQLite | Core package | Supported local backend | One logical index per database file; local transactional snapshot apply, active-record filtering, tombstones, brute-force vector queries, verification, and compaction. No collection namespaces, alias swaps, remote service, replication, or high-availability claim. |
 | Other vector databases | N/A | Not implemented | The adapter contract exists, but no other backend is advertised as supported until it passes the shared conformance suite. |
 
 Use a distinct `[index].database` path for each logical index. `collection` and `alias` configuration keys are rejected rather than ignored. SQLite is useful for development, local evaluation, and the end-to-end reference path; capacity, concurrency, backup, and availability must be evaluated before any production use.
@@ -19,8 +19,8 @@ See [adapter conformance](adapter-conformance.md) for the requirements any addit
 
 | Provider value | Install | Network/account | Current status and constraints |
 | --- | --- | --- | --- |
-| `hash` | Core package | Neither | Deterministic signed feature hashing for tests and offline demos. It has no learned semantic model and is not suitable for production retrieval or retrieval-quality evaluation. |
-| `openai` | `pip install "cairn-rag[openai]"` | Official API and key | Optional adapter. The alpha configuration accepts only the official endpoint and `OPENAI_API_KEY`; custom endpoints and credential-variable names are rejected. It passes configured model/dimensions to the embeddings API. Model availability, dimension support, and quotas remain operator responsibilities. |
+| `hash` | Core package | Neither | Deterministic unigram/bigram feature hashing for offline lexical retrieval. Suitable for exact-term and keyword matching; it does not infer semantic similarity or synonyms. |
+| `openai` | `pip install "cairn-rag[openai]"` | Official API and key | Optional adapter. The configuration accepts only the official endpoint and `OPENAI_API_KEY`; custom endpoints and credential-variable names are rejected. It passes configured model/dimensions to the embeddings API. Model availability, dimension support, and quotas remain operator responsibilities. |
 | `sentence-transformers` | `pip install "cairn-rag[sentence-transformers]"` | No inference API required; model loading may download files | Optional local adapter. The configured dimensions must exactly match the loaded model. Hardware capacity, model artifacts, licenses, trust settings, and reproducibility remain operator responsibilities. |
 
 Optional SDKs are imported only when their provider is selected. Importing `cairn_rag` does not require provider credentials or network access.

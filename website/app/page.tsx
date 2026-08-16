@@ -54,7 +54,7 @@ const support = [
   ["Embeddings", "Offline hash demo · optional OpenAI · sentence-transformers"],
   ["Chunking", "Rabin CDC default · opt-in snapping · comparison strategies"],
   ["State", "Cache · manifests · Merkle roots · tombstones · verification"],
-  ["Measurement", "Deterministic churn and retrieval smoke benchmarks"],
+  ["Measurement", "Published five-corpus churn and retrieval regressions"],
   ["Output", "Human-readable terminal tables and machine-readable JSON"],
 ] as const;
 
@@ -92,7 +92,7 @@ export default function Home() {
                 <code>python -m pip install cairn-rag</code>
               </div>
               <p className="release-note">
-                Version 0.1.0 is available on{" "}
+                Version 0.2.0 is available on{" "}
                 <a href={packageUrl} target="_blank" rel="noopener noreferrer">
                   PyPI
                 </a>
@@ -193,11 +193,11 @@ export default function Home() {
               <p className="section-label">CLI WORKFLOW</p>
               <h2>Start offline. Inspect every transition.</h2>
               <p>
-                The starter config uses a deterministic local hash embedder, so you can exercise
-                the workflow without credentials or network access.
+                The starter config uses deterministic local lexical embeddings, so indexing and
+                keyword retrieval work without credentials or network access.
               </p>
               <div className="inline-note">
-                The hash embedder is demo infrastructure, not a retrieval-quality model.
+                Select a learned provider when queries require semantic similarity or synonyms.
               </div>
             </div>
 
@@ -258,7 +258,7 @@ export default function Home() {
         <section className="section shell">
           <div className="section-intro section-intro-wide">
             <p className="section-label">CURRENT SUPPORT</p>
-            <h2>A deliberately narrow alpha.</h2>
+            <h2>A deliberately narrow supported core.</h2>
             <p>
               The reference path is implemented end to end. Additional backends are not presented
               as supported until they pass the shared adapter conformance suite.
@@ -279,22 +279,22 @@ export default function Home() {
           <div className="shell limitation-grid">
             <div>
               <p className="section-label section-label-warm">HONEST LIMITATIONS</p>
-              <h2>Research questions remain visible.</h2>
+              <h2>Limits stay explicit.</h2>
             </div>
             <div className="limitation-copy">
               <p className="limitation-lede">
-                Local fingerprint candidates do not yet imply a fixed-distance chunk-locality
-                guarantee.
+                TTTD v1 is regression-tested for churn, but it does not claim a universal
+                fixed-distance locality proof.
               </p>
               <p>
-                The current stateful TTTD selector can remain out of phase after an edit until a
-                common primary boundary appears. A passing regression records the exact
-                phase-shifted counterexample instead of claiming a guarantee Cairn does not satisfy.
+                The stateful fallback can remain out of phase until a common primary boundary.
+                Cairn keeps the counterexample as a regression and reports measured churn instead
+                of turning an empirical result into a theorem.
               </p>
               <p>
-                Published churn and retrieval-quality evidence is still pending. Sentence and
-                paragraph snapping is experimental, disabled by default, and requires further
-                empirical and project-specific patent review.
+                Across the bundled five-corpus benchmark, default CDC re-embeds 32.7% of revised
+                chunks versus 53.3% for fixed chunking, with recall@5 of 1.0 under both offline
+                scorers. Structural snapping remains opt-in and requires project-specific review.
               </p>
             </div>
           </div>

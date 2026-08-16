@@ -1,10 +1,10 @@
 # Limitations and risk register
 
-Cairn is experimental software. This page distinguishes measured behavior from design intent and should be read before production evaluation.
+Cairn has a deliberately narrow supported scope. This page records the boundaries that remain after the local reference workflow and v1 identity contract were stabilized.
 
-## No published performance or retrieval result yet
+## Built-in results do not replace corpus-specific evaluation
 
-The project's motivating churn numbers are targets for a benchmark, not established results. There is not yet a published, reproducible comparison across the proposed corpora, edit patterns, chunkers, and embedding models.
+The project publishes a reproducible comparison across five versioned fixture corpora, nine edit operations, five chunkers, and two offline retrieval scorers. Those results are regression evidence for Cairn's implementation, not a claim about every private corpus or embedding model; see [benchmarks](benchmarks.md).
 
 Content-defined chunks may retrieve worse than semantic or structure-aware chunks. No cost reduction compensates for a material quality regression. Evaluate recall, nDCG, answer quality, latency, and churn on representative private data before choosing a strategy.
 
@@ -14,13 +14,13 @@ Cairn is designed for large documents with edits that are small relative to the 
 
 ## Boundary quality is not semantic quality
 
-Plain Rabin CDC reacts to content patterns, not meaning. Boundaries can fall inside sentences or separate tightly related passages. Optional local snapping may improve readability, but it can also change size distributions and has not yet established a retrieval benefit.
+Plain Rabin CDC reacts to content patterns, not meaning. Boundaries can fall inside sentences or separate tightly related passages. Optional local snapping may improve readability, but it also changes size distributions. The built-in results do not establish a general retrieval benefit from snapping.
 
 The dependency-free `SemanticChunker` defaults to lexical Jaccard similarity. Built-in benchmark tables label it `semantic-lexical-proxy`; it is a deterministic structural baseline, not an embedding-based semantic result. A real semantic comparison must inject and identify an embedding similarity function.
 
 Structure-aware Markdown, HTML, code, tables, figures, and PDFs are unsupported because they require format-specific extraction and boundary handling. The text algorithm does not imply those capabilities.
 
-## Stateful fallback boundaries reduce practical locality
+## Locality is measured rather than claimed as a universal bound
 
 The rolling fingerprint candidates are local, but the current `tttd-v1` segmentation rule also measures minimum and maximum sizes from the preceding emitted boundary. Maximum-size hard cuts can therefore reintroduce downstream drift. Choosing the most recent backup candidate does not remove the state dependency: two runs can remain in different backup-boundary phases beyond the proposed fixed locality margin even when neither run reports a hard cut. A later common primary boundary often resynchronizes ordinary inputs, but the current algorithm provides no fixed-distance guarantee.
 
@@ -34,7 +34,7 @@ Whitespace normalization intentionally treats some source representations as equ
 
 Tokenizer-independent word boundaries do not remove tokenization concerns: chunk limits still rely on a deterministic token count or estimate. A model may count differently, so providers must validate their actual input limit. Changing normalization, token counting, or boundary parameters changes chunk identity and can cause a broad migration.
 
-The identity schema is not frozen before 1.0.
+Chunk identity `cairn-chunk-identity-v1` is frozen. Changing normalization, rolling-hash behavior, boundary rules, token accounting, or hash serialization requires a new versioned identity and an explicit migration; see [compatibility](compatibility.md).
 
 ## Snapping requires additional review
 
@@ -56,9 +56,9 @@ The local migration workflow provides explicit preview/apply, durable config per
 
 Completed embedding batches are committed to the local cache before index publication and are reused after a later crash. There is still a narrow window between a provider accepting a request and the cache commit. If the process dies there, a retry may incur duplicate spend. The current provider interface does not claim strict billing idempotency; production adapters need a provider-supported idempotency key to close that window.
 
-## Local demo embeddings are not production retrieval
+## Offline embeddings are lexical, not semantic
 
-The deterministic hash embedding provider used by examples and tests, when present, exists only to exercise caching and index plumbing without network access. It is **not suitable for production retrieval**, has no semantic-quality claim, and must not be used to evaluate Cairn's retrieval performance.
+The deterministic hash provider supplies usable offline exact-term and keyword retrieval through signed unigram/bigram feature hashing. It has no learned semantic model: queries that depend on synonyms, paraphrases, or domain meaning require a learned embedding provider and corpus-specific evaluation.
 
 ## Privacy and provider terms
 

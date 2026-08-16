@@ -1,4 +1,4 @@
-"""A deterministic, offline feature-hashing embedder for tests and evaluation."""
+"""A deterministic, offline lexical feature-hashing embedder."""
 
 from __future__ import annotations
 
@@ -25,10 +25,10 @@ def _params_hash(model: str, dimensions: int) -> str:
 
 @dataclass(frozen=True)
 class HashEmbeddingProvider:
-    """Signed feature hashing; useful for smoke tests, not production retrieval.
+    """Signed unigram/bigram hashing for offline lexical retrieval.
 
-    It intentionally has no learned semantics. Keeping it built in makes the entire
-    index/apply/delete path testable with no account, model download, or network.
+    The provider is deterministic and requires no model or network. It ranks shared
+    terms and adjacent terms; it does not infer semantic similarity or synonyms.
     """
 
     model: str = "cairn-hash-256-v1"

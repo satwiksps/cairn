@@ -115,7 +115,7 @@ A small durable journal beside `cairn.toml` closes the SQLite/config crash windo
 
 ## Measurements
 
-The measurement commands use small deterministic built-in fixtures. They are smoke/regression tools, not evidence for real-corpus cost or retrieval claims, and they do not use project configuration.
+The measurement commands use versioned deterministic fixtures and do not read project configuration. The published results are reproducible regression evidence for those fixtures, not a forecast for every private corpus; see [benchmarks](benchmarks.md).
 
 ### `measure churn`
 
@@ -135,7 +135,7 @@ cairn-rag measure retrieval [--json] [--strategy NAME] [--corpus NAME]
   [--scoring lexical|hash-embedding] [-k NUMBER]
 ```
 
-Reports recall and nDCG over the fixture gold questions. The default scorer is lexical and the default `k` is 5. `hash-embedding` uses the demo feature-hashing provider and does not establish semantic retrieval quality.
+Reports recall and nDCG over the versioned fixture gold questions. The default scorer is lexical and the default `k` is 5. `hash-embedding` exercises the same offline lexical feature-hashing provider used by the starter configuration; neither scorer measures synonym or semantic understanding.
 
 ## Embedding cache commands
 
@@ -185,4 +185,4 @@ Imports a Cairn JSONL cache export after the operator explicitly supplies `--tru
 | 4 | Configuration error |
 | 130 | Interrupted with Ctrl+C |
 
-Treat JSON output and the Python API as alpha interfaces until the project reaches a compatibility milestone.
+Documented JSON fields and top-level Python exports follow the [compatibility policy](compatibility.md). Consumers must ignore additional JSON fields so compatible releases can add diagnostics.

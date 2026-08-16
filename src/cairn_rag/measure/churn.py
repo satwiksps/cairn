@@ -168,7 +168,7 @@ class ChurnSummary:
 
     results: tuple[ChurnResult, ...]
     fixture_notice: str = (
-        "Built-in fixtures are smoke/regression data, not published real-corpus results."
+        "Built-in fixtures are versioned regression data; results apply only to those fixtures."
     )
 
     @property
@@ -420,7 +420,7 @@ def benchmark_churn(
     operations: Iterable[EditOperation | str] = tuple(EditOperation),
     price: EmbeddingPrice = ILLUSTRATIVE_PRICE,
 ) -> ChurnSummary:
-    """Run the deterministic churn smoke/regression benchmark."""
+    """Run the deterministic churn regression benchmark."""
 
     selected_strategies = dict(strategies) if strategies is not None else default_strategies()
     if not selected_strategies:

@@ -20,7 +20,7 @@ export function GET() {
       <div style={{ display: "flex", alignItems: "center", gap: 18, fontSize: 32 }}>
         <div style={{ width: 20, height: 20, borderRadius: 5, background: "#8ce8b3" }} />
         Cairn
-        <span style={{ color: "#78817c", fontSize: 22 }}>v0.1 alpha</span>
+        <span style={{ color: "#78817c", fontSize: 22 }}>v0.2</span>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         <div style={{ color: "#8ce8b3", fontSize: 22, letterSpacing: 3 }}>

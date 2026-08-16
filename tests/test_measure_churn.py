@@ -111,7 +111,7 @@ def test_benchmark_shape_and_fixture_notice() -> None:
         EditOperation.APPEND,
         EditOperation.INSERT_SENTENCE,
     }
-    assert "not published real-corpus results" in summary.fixture_notice
+    assert "versioned regression data" in summary.fixture_notice
     assert len(summary.summary_rows()) == 2
     json.dumps(summary.as_dict())
 
@@ -146,3 +146,22 @@ def test_default_five_way_churn_regression() -> None:
     assert by_strategy["cdc-rabin"].reembed_fraction <= 0.25
     assert by_strategy["cdc-rabin+snap"].reembed_fraction <= 0.25
     assert by_strategy["cdc-rabin"].chunks_to_embed < by_strategy["fixed"].chunks_to_embed
+
+
+def test_full_builtin_churn_regression_threshold() -> None:
+    summary = benchmark_churn()
+    by_strategy = {
+        strategy: [result for result in summary.results if result.strategy == strategy]
+        for strategy in DEFAULT_STRATEGY_NAMES
+    }
+
+    def weighted_fraction(strategy: str) -> float:
+        results = by_strategy[strategy]
+        return sum(result.chunks_to_embed for result in results) / sum(
+            result.revised_chunk_count for result in results
+        )
+
+    assert len(summary.results) == 225
+    assert weighted_fraction("cdc-rabin") <= 0.35
+    assert weighted_fraction("cdc-rabin+snap") <= 0.35
+    assert weighted_fraction("cdc-rabin") < weighted_fraction("fixed")

@@ -1,7 +1,7 @@
 # Minimal offline-friendly Cairn configuration.
 #
-# The hash embedding provider below is deterministic test/demo infrastructure.
-# It is NOT suitable for production retrieval or retrieval-quality evaluation.
+# The hash provider gives deterministic offline exact-term and keyword retrieval.
+# Use a learned provider when queries depend on synonyms or semantic similarity.
 
 [chunker]
 strategy = "cdc-rabin"

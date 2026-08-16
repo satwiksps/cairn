@@ -1,4 +1,4 @@
-"""Deterministic, offline retrieval-quality smoke measurements.
+"""Deterministic, offline retrieval-quality regression measurements.
 
 The built-in lexical and feature-hash scorers require no model download or
 network access.  They are intended to catch regressions and compare chunking
@@ -152,7 +152,7 @@ class RetrievalSummary:
 
     results: tuple[RetrievalResult, ...]
     fixture_notice: str = (
-        "Built-in fixtures are smoke/regression data, not published real-corpus results."
+        "Built-in fixtures are versioned regression data; results apply only to those fixtures."
     )
 
     def summary_rows(self) -> tuple[dict[str, object], ...]:

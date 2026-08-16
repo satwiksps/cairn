@@ -36,8 +36,8 @@ snap_window_words = 24
 primary_mask_bits = 8
 backup_mask_bits = 6
 
-# The deterministic hash provider makes the first run offline and free. It is
-# useful for smoke tests, not production retrieval or quality evaluation.
+# The deterministic hash provider provides offline lexical retrieval. Select a
+# learned provider when queries need semantic similarity or synonym matching.
 [embedding]
 provider = "hash"
 model = "cairn-hash-256-v1"
@@ -145,11 +145,11 @@ class EmbeddingConfig:
         if self.provider == "openai":
             if self.api_key_env not in {None, "OPENAI_API_KEY"}:
                 raise ConfigError(
-                    "The alpha OpenAI adapter only reads OPENAI_API_KEY; custom secret "
+                    "The OpenAI adapter only reads OPENAI_API_KEY; custom secret "
                     "environment variables are not accepted from project config"
                 )
             if self.base_url is not None:
-                raise ConfigError("Custom OpenAI base_url endpoints are disabled in this alpha")
+                raise ConfigError("Custom OpenAI base_url endpoints are not supported")
         elif self.api_key_env is not None or self.base_url is not None:
             raise ConfigError(
                 "embedding.api_key_env and embedding.base_url are only valid for OpenAI"

@@ -9,6 +9,7 @@ from typing import Any
 
 HASH_ALGORITHM = "sha256"
 IDENTITY_SCHEMA_VERSION = "cairn-chunk-identity-v1"
+SUPPORTED_IDENTITY_SCHEMA_VERSIONS = frozenset({IDENTITY_SCHEMA_VERSION})
 
 
 def _field_bytes(value: str | bytes) -> bytes:
@@ -58,6 +59,8 @@ def chunk_content_hash(
     interface.  They belong in the embedding-cache key alongside this hash.
     """
 
+    if identity_schema_version not in SUPPORTED_IDENTITY_SCHEMA_VERSIONS:
+        raise ValueError(f"unsupported chunk identity schema: {identity_schema_version!r}")
     if not chunker_id or not chunker_params_hash or not normalizer_version:
         raise ValueError("chunk identity fields cannot be empty")
     return hash_fields(

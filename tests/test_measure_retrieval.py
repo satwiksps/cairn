@@ -115,7 +115,7 @@ def test_benchmark_compares_supplied_strategies() -> None:
         "paragraph-a",
         "paragraph-b",
     ]
-    assert "not published real-corpus results" in summary.fixture_notice
+    assert "versioned regression data" in summary.fixture_notice
     assert summary.summary_rows()[0]["questions"] == 1
     json.dumps(summary.as_dict())
 
@@ -137,3 +137,18 @@ def test_default_five_way_retrieval_regression() -> None:
     assert all(result.question_count == 8 for result in summary.results)
     assert all(result.mean_recall_at_k >= 0.8 for result in summary.results)
     assert all(result.mean_ndcg_at_10 >= 0.75 for result in summary.results)
+
+
+@pytest.mark.parametrize(
+    ("method", "minimum_ndcg"),
+    [(ScoringMethod.LEXICAL, 0.90), (ScoringMethod.HASH_EMBEDDING, 0.85)],
+)
+def test_cdc_retrieval_regression_thresholds(method: ScoringMethod, minimum_ndcg: float) -> None:
+    result = next(
+        result
+        for result in benchmark_retrieval(scoring_method=method).results
+        if result.strategy == "cdc-rabin"
+    )
+    assert result.question_count == 8
+    assert result.mean_recall_at_k == 1.0
+    assert result.mean_ndcg_at_10 >= minimum_ndcg

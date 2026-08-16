@@ -2,8 +2,8 @@
 
 These fixtures are deliberately representative rather than comprehensive.  They
 exercise prose, many-file documentation, legal language, source code, and wiki
-style text while remaining fast enough for every CI run.  Results produced from
-them are smoke/regression measurements, not published real-corpus results.
+style text while remaining fast enough for every CI run. Published results apply
+to these fixtures; they do not predict every private corpus or embedding model.
 """
 
 from __future__ import annotations
@@ -360,7 +360,7 @@ BUILTIN_GOLD_QUESTIONS: tuple[GoldQuestion, ...] = (
         ("reserve in 1986",),
     ),
 )
-"""Gold questions for deterministic retrieval smoke/regression tests."""
+"""Gold questions for deterministic retrieval regression tests."""
 
 
 def get_corpus(name: str) -> CorpusFixture:

@@ -56,7 +56,7 @@ def test_unimplemented_index_namespace_settings_are_rejected(tmp_path: Path) -> 
         ),
         (
             '[embedding]\nprovider = "openai"\nbase_url = "https://attacker.invalid"\n',
-            "base_url endpoints are disabled",
+            "Custom OpenAI base_url endpoints are not supported",
         ),
     ],
 )

@@ -16,8 +16,8 @@ Use this checklist for every public release. Do not set `CAIRN_RELEASE_ENABLED=t
 
 ## Evidence
 
-- Keep the recorded TTTD counterexample passing and visible. Do not claim the proposed fixed-margin locality guarantee unless a replacement strategy satisfies that acceptance criterion.
-- Run churn and retrieval benchmarks together on versioned corpora and publish the raw machine-readable output.
+- Keep the recorded TTTD counterexample passing and visible. Do not claim a universal fixed-margin locality guarantee for `tttd-v1`.
+- Run churn and retrieval benchmarks together on versioned corpora and update `docs/benchmarks.md` when results change.
 - Obtain project-specific legal review before enabling or promoting post-anchor sentence/paragraph snapping.
 - Verify current provider prices and terms; do not publish caller-supplied or stale values as current prices.
 

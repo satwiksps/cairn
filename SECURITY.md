@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are applied to the latest released `0.1.x` version and the `main` branch. Older alpha versions are not maintained.
+Security fixes are applied to the latest published minor release and the `main` branch. Older `0.x` minors are not maintained.
 
 ## Reporting a vulnerability
 

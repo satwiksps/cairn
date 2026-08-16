@@ -115,6 +115,8 @@ Serialization is canonical and length-delimited. At a minimum, chunker parameter
 
 The embedding model is intentionally absent. Embedding cache identity adds `embedding_model_id` and `embedding_parameters_hash` outside the chunk hash.
 
+`cairn-chunk-identity-v1` is the stable identity contract for the 0.2 release line. Golden-vector tests pin its canonical parameter hash and chunk hash. Any future incompatible normalization, boundary, token-accounting, or serialization change must use a new identity version and an explicit migration; see [compatibility](compatibility.md).
+
 ## 6. Diagnostics and acceptance criteria
 
 Every chunking run should expose enough diagnostics to aggregate:

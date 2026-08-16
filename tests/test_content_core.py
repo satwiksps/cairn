@@ -6,6 +6,7 @@ import pytest
 
 from cairn_rag.chunk import CDCChunker, CDCParams
 from cairn_rag.content import (
+    IDENTITY_SCHEMA_VERSION,
     CorpusManifest,
     DocumentManifest,
     MerkleTree,
@@ -31,6 +32,33 @@ def test_chunk_hash_commits_to_chunking_but_not_embedding_model() -> None:
     assert first != chunk_content_hash(
         "same content", **{**fields, "chunker_params_hash": "other-params"}
     )
+
+
+def test_v1_chunk_identity_golden_vector_is_frozen() -> None:
+    params = CDCParams()
+
+    assert IDENTITY_SCHEMA_VERSION == "cairn-chunk-identity-v1"
+    assert params.params_hash == "da7c441b130c3772241ea045a04bf193d2652417a407d8f78cb75bdddff62f87"
+    assert (
+        chunk_content_hash(
+            "alpha beta",
+            chunker_id="cdc-rabin",
+            chunker_params_hash=params.params_hash,
+            normalizer_version=params.normalizer_version,
+        )
+        == "a2bae2698fdf8361027f759bb7843e5a2f68a50126c72255c9cbec131380be7a"
+    )
+
+
+def test_unknown_chunk_identity_schema_is_rejected() -> None:
+    with pytest.raises(ValueError, match="unsupported chunk identity schema"):
+        chunk_content_hash(
+            "alpha beta",
+            chunker_id="cdc-rabin",
+            chunker_params_hash="params",
+            normalizer_version="normalizer-v1",
+            identity_schema_version="cairn-chunk-identity-v2",
+        )
 
 
 def test_merkle_roots_are_deterministic_order_sensitive_and_diffable() -> None:

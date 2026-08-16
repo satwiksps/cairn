@@ -1,7 +1,7 @@
-"""Offline churn and retrieval benchmarks for Cairn chunking strategies.
+"""Offline churn and retrieval regression benchmarks for Cairn chunking strategies.
 
-The built-in fixtures are intentionally small smoke/regression data.  Run the
-same APIs on a representative real corpus before making production claims.
+The versioned fixtures provide fast, reproducible regression evidence. Run the
+same APIs on a representative private corpus before making corpus-specific claims.
 """
 
 from .churn import (

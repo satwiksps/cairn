@@ -434,9 +434,7 @@ def _churn(args: argparse.Namespace, console: Console) -> int:
     if args.json:
         json_output(result.as_dict(), console=console)
     else:
-        render_mapping_rows(
-            list(result.summary_rows()), title="Churn smoke benchmark", console=console
-        )
+        render_mapping_rows(list(result.summary_rows()), title="Churn benchmark", console=console)
         console.print(f"[yellow]{result.fixture_notice}[/yellow]")
     return int(ExitCode.SUCCESS)
 
@@ -467,7 +465,7 @@ def _retrieval(args: argparse.Namespace, console: Console) -> int:
         json_output(result.as_dict(), console=console)
     else:
         render_mapping_rows(
-            list(result.summary_rows()), title="Retrieval smoke benchmark", console=console
+            list(result.summary_rows()), title="Retrieval benchmark", console=console
         )
         console.print(f"[yellow]{result.fixture_notice}[/yellow]")
     return int(ExitCode.SUCCESS)
@@ -588,7 +586,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     migrate.set_defaults(handler=_migrate)
 
-    measure = subparsers.add_parser("measure", help="run transparent smoke benchmarks")
+    measure = subparsers.add_parser("measure", help="run reproducible regression benchmarks")
     measure_sub = measure.add_subparsers(dest="measure_command", required=True)
     churn = measure_sub.add_parser("churn", help="measure re-embedding volume")
     churn.add_argument("--json", action="store_true")
