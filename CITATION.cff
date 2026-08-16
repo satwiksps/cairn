@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use Cairn in research or published work, please cite this software."
+title: "Cairn: incremental indexing for changing RAG corpora"
+type: software
+authors:
+  - family-names: "Sahoo"
+    given-names: "Satwik Sai Prakash"
+    email: "sahoospsatwik@gmail.com"
+repository-code: "https://github.com/satwiksps/cairn"
+url: "https://cairn-rag.vercel.app"
+version: 0.1.0
+date-released: 2026-08-16
+license: Apache-2.0
+keywords:
+  - retrieval-augmented generation
+  - content-defined chunking
+  - incremental indexing
+  - embeddings
+abstract: >-
+  Cairn is a Python toolkit for content-defined chunking, content-addressed
+  identities, cache-aware planning, and transactional indexing of changing
+  retrieval-augmented generation corpora.

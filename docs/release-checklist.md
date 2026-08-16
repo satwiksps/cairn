@@ -13,7 +13,7 @@ Cairn's code and distributions can be built locally, but public publishing is in
 - Enable GitHub private vulnerability reporting.
 - Replace the fallback profile instruction in `SECURITY.md` with a monitored private security address or form.
 - Name a private Code of Conduct enforcement contact.
-- Confirm that the MIT copyright line names the intended owner.
+- Confirm that the Apache-2.0 copyright notice names the intended owner.
 
 ## Evidence
 

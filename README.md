@@ -147,4 +147,4 @@ Contributions are welcome. Start with [`CONTRIBUTING.md`](https://github.com/sat
 
 ## License
 
-Cairn is available under the [MIT License](https://github.com/satwiksps/cairn/blob/main/LICENSE).
+Cairn is available under the [Apache License 2.0](https://github.com/satwiksps/cairn/blob/main/LICENSE).

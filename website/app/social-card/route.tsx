@@ -35,7 +35,7 @@ export function GET() {
         <span>·</span>
         <span>Transactional indexing</span>
         <span>·</span>
-        <span>MIT licensed</span>
+        <span>Apache-2.0 licensed</span>
       </div>
     </div>,
     { width: 1200, height: 630 },

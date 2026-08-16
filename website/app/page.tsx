@@ -71,7 +71,7 @@ export default function Home() {
           <div className="hero-grid">
             <div className="hero-copy">
               <div className="eyebrow">
-                <span className="eyebrow-mark" /> Open source · MIT · Python 3.10+
+                <span className="eyebrow-mark" /> Open source · Apache-2.0 · Python 3.10+
               </div>
               <h1>Incremental indexing for RAG corpora that change.</h1>
               <p className="hero-lede">
@@ -298,7 +298,7 @@ export default function Home() {
 
         <section id="open-source" className="final-section shell">
           <CairnMark className="mx-auto h-10 w-10 text-[var(--accent)]" />
-          <p className="section-label mt-7">MIT LICENSED · OPEN SOURCE</p>
+          <p className="section-label mt-7">APACHE-2.0 LICENSED · OPEN SOURCE</p>
           <h2>Evaluate Cairn on your corpus.</h2>
           <p>
             Start offline, inspect the delta, then measure churn and retrieval quality before
@@ -336,7 +336,7 @@ export default function Home() {
                 Source <ArrowUpRightIcon className="inline h-3.5 w-3.5" />
               </a>
             ) : null}
-            <span>MIT License</span>
+            <span>Apache License 2.0</span>
           </div>
         </div>
       </footer>
