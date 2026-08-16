@@ -6,8 +6,8 @@
 
 [![CI](https://github.com/satwiksps/steadlith/actions/workflows/ci.yml/badge.svg)](https://github.com/satwiksps/steadlith/actions/workflows/ci.yml)
 [![Codecov](https://codecov.io/gh/satwiksps/steadlith/graph/badge.svg)](https://codecov.io/gh/satwiksps/steadlith)
-[![PyPI](https://img.shields.io/pypi/v/steadlith)](https://pypi.org/project/steadlith/)
-[![Python](https://img.shields.io/pypi/pyversions/steadlith)](https://pypi.org/project/steadlith/)
+[![PyPI](https://img.shields.io/pypi/v/steadlith?cacheSeconds=300)](https://pypi.org/project/steadlith/)
+[![Python](https://img.shields.io/pypi/pyversions/steadlith?cacheSeconds=300)](https://pypi.org/project/steadlith/)
 [![License](https://img.shields.io/github/license/satwiksps/steadlith)](LICENSE)
 
 > Steadlith reuses unchanged RAG chunks with content-defined identities, cache-aware planning, and transactional indexing.
