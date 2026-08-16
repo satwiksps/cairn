@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-import { CairnMark, GitHubIcon } from "@/components/icons";
-import { repositoryUrl, site } from "@/lib/site";
+import { GitHubIcon, SteadlithMark } from "@/components/icons";
+import { repositoryUrl } from "@/lib/site";
 
 const navigation = [
-  { label: "Why Cairn", href: "#why" },
+  { label: "Why Steadlith", href: "#why" },
   { label: "Architecture", href: "#architecture" },
   { label: "Quick start", href: "#quickstart" },
   { label: "Limitations", href: "#limitations" },
@@ -14,9 +14,9 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="shell flex h-16 items-center justify-between gap-6">
-        <Link href="#top" className="brand-link" aria-label="Cairn home">
-          <CairnMark className="h-7 w-7 text-[var(--accent)]" />
-          <span>Cairn</span>
+        <Link href="#top" className="brand-link" aria-label="Steadlith home">
+          <SteadlithMark className="h-7 w-7 text-[var(--accent)]" />
+          <span>Steadlith</span>
         </Link>
 
         <nav
@@ -31,14 +31,13 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2.5">
-          <span className="version-badge hidden xl:inline-flex">{site.version}</span>
           {repositoryUrl ? (
             <a
               href={repositoryUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="icon-button"
-              aria-label="Open the Cairn GitHub repository"
+              aria-label="Open the Steadlith GitHub repository"
             >
               <GitHubIcon className="h-[18px] w-[18px]" />
             </a>

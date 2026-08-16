@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from cairn_rag.measure.corpora import (
+from steadlith.measure.corpora import (
     BUILTIN_CORPORA,
     BUILTIN_GOLD_QUESTIONS,
     CorpusKind,
@@ -40,10 +40,10 @@ def test_global_replacement_updates_every_occurrence() -> None:
         original,
         EditOperation.GLOBAL_REPLACE,
         find="stone",
-        replacement="cairn",
+        replacement="steadlith",
     )
     assert "stone" not in revised.casefold()
-    assert revised.casefold().count("cairn") == 3
+    assert revised.casefold().count("steadlith") == 3
 
 
 def test_gold_evidence_is_present_and_routed_by_corpus() -> None:

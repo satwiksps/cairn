@@ -5,17 +5,17 @@ from pathlib import Path
 
 import pytest
 
-from cairn_rag.config import (
-    CairnConfig,
+from steadlith.config import (
     ChunkerConfig,
     EmbeddingConfig,
     IndexConfig,
     SourcesConfig,
+    SteadlithConfig,
     StoreConfig,
 )
-from cairn_rag.errors import BackendError, ConfigError
-from cairn_rag.index.plan import OperationKind
-from cairn_rag.index.service import (
+from steadlith.errors import BackendError, ConfigError
+from steadlith.index.plan import OperationKind
+from steadlith.index.service import (
     apply_prepared,
     compact_index,
     index_status,
@@ -25,8 +25,8 @@ from cairn_rag.index.service import (
 )
 
 
-def _config(tmp_path: Path) -> CairnConfig:
-    return CairnConfig(
+def _config(tmp_path: Path) -> SteadlithConfig:
+    return SteadlithConfig(
         chunker=ChunkerConfig(
             strategy="cdc-rabin",
             window_words=4,
@@ -42,8 +42,8 @@ def _config(tmp_path: Path) -> CairnConfig:
             dimensions=32,
             batch_size=3,
         ),
-        store=StoreConfig(cache=".cairn/cache.sqlite3"),
-        index=IndexConfig(database=".cairn/index.sqlite3"),
+        store=StoreConfig(cache=".steadlith/cache.sqlite3"),
+        index=IndexConfig(database=".steadlith/index.sqlite3"),
         sources=SourcesConfig(include=("docs/*.md",), exclude=()),
         base_dir=tmp_path,
     ).validate()
@@ -109,7 +109,7 @@ def test_plan_apply_edit_delete_verify_and_compact(tmp_path: Path) -> None:
     assert index_status(config).tombstoned_chunks == 0
 
 
-def test_explicit_project_scope_never_indexes_cairn_state(tmp_path: Path) -> None:
+def test_explicit_project_scope_never_indexes_steadlith_state(tmp_path: Path) -> None:
     config = replace(
         _config(tmp_path),
         store=StoreConfig(cache="cache.sqlite3"),
@@ -181,9 +181,9 @@ def test_query_rejects_missing_empty_or_invalid_input(tmp_path: Path) -> None:
 
 
 def test_service_validates_programmatic_configuration(tmp_path: Path) -> None:
-    invalid = CairnConfig(
-        store=StoreConfig(cache=".cairn/shared.sqlite3"),
-        index=IndexConfig(database=".cairn/shared.sqlite3"),
+    invalid = SteadlithConfig(
+        store=StoreConfig(cache=".steadlith/shared.sqlite3"),
+        index=IndexConfig(database=".steadlith/shared.sqlite3"),
         base_dir=tmp_path,
     )
     with pytest.raises(ConfigError, match="must use different files"):

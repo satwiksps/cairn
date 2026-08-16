@@ -5,8 +5,8 @@ from io import BytesIO, StringIO, TextIOWrapper
 
 from rich.console import Console
 
-from cairn_rag.index.adapters import VectorMatch
-from cairn_rag.report import json_output, render_query_matches
+from steadlith.index.adapters import VectorMatch
+from steadlith.report import json_output, render_query_matches
 
 
 def test_json_output_is_plain_json_even_on_a_color_terminal() -> None:

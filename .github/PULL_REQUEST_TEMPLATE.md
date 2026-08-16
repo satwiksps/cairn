@@ -12,7 +12,7 @@
 
 - [ ] `python -m ruff check .`
 - [ ] `python -m ruff format --check .`
-- [ ] `python -m mypy src/cairn_rag`
+- [ ] `python -m mypy src/steadlith`
 - [ ] `python -m pytest`
 - [ ] `python -m build`
 

@@ -34,7 +34,9 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Local Cairn state and potentially sensitive configuration
+# Local Steadlith state and potentially sensitive configuration
+.steadlith/
+# State retained by projects adopted from 0.2
 .cairn/
 *.db
 *.sqlite

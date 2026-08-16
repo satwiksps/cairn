@@ -4,7 +4,7 @@ import random
 
 import pytest
 
-from cairn_rag.chunk import (
+from steadlith.chunk import (
     CDCChunker,
     CDCParams,
     FixedChunker,
@@ -14,8 +14,8 @@ from cairn_rag.chunk import (
     chunker_from_config,
     create_chunker,
 )
-from cairn_rag.chunk.cdc import rolling_fingerprints
-from cairn_rag.chunk.stream import normalize_stream
+from steadlith.chunk.cdc import rolling_fingerprints
+from steadlith.chunk.stream import normalize_stream
 
 
 def _document(count: int, prefix: str = "word") -> str:
@@ -271,7 +271,7 @@ def test_chunker_factories_accept_mapping_configuration() -> None:
 
 def test_from_config_rejects_a_path_in_the_pure_chunking_layer() -> None:
     with pytest.raises(TypeError, match="load TOML"):
-        CDCChunker.from_config("cairn.toml")
+        CDCChunker.from_config("steadlith.toml")
 
 
 def _locality_case(

@@ -7,7 +7,7 @@ from typing import Any
 
 import pytest
 
-from cairn_rag.measure.churn import (
+from steadlith.measure.churn import (
     DEFAULT_STRATEGY_NAMES,
     EmbeddingPrice,
     benchmark_churn,
@@ -15,7 +15,7 @@ from cairn_rag.measure.churn import (
     measure_corpus_churn,
     snapshot_chunks,
 )
-from cairn_rag.measure.corpora import EditOperation, get_corpus
+from steadlith.measure.corpora import EditOperation, get_corpus
 
 
 class PipeChunker:

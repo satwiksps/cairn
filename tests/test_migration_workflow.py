@@ -4,12 +4,12 @@ from pathlib import Path
 
 import pytest
 
-from cairn_rag.cli import main
-from cairn_rag.config import load_config, pending_migration_path
-from cairn_rag.errors import BackendError, ConfigError, ExitCode
-from cairn_rag.index import service as index_service
-from cairn_rag.index.service import index_status, prepare_index, verify_index
-from cairn_rag.migrate import (
+from steadlith.cli import main
+from steadlith.config import load_config, pending_migration_path
+from steadlith.errors import BackendError, ConfigError, ExitCode
+from steadlith.index import service as index_service
+from steadlith.index.service import index_status, prepare_index, verify_index
+from steadlith.migrate import (
     apply_migration,
     prepare_migration,
     prepare_rollback,
@@ -19,7 +19,7 @@ from cairn_rag.migrate import (
 
 
 def _project(tmp_path: Path) -> Path:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     config.write_text(
         """\
 [chunker]
@@ -38,11 +38,11 @@ dimensions = 32
 batch_size = 4
 
 [store]
-cache = ".cairn/cache.sqlite3"
+cache = ".steadlith/cache.sqlite3"
 
 [index]
 backend = "sqlite"
-database = ".cairn/index.sqlite3"
+database = ".steadlith/index.sqlite3"
 
 [sources]
 include = ["docs/*.md"]
@@ -116,7 +116,7 @@ def test_model_migration_persists_config_history_and_rolls_back(tmp_path: Path) 
     assert migrated_status.generation == before_status.generation + 1
     assert migrated_status.tombstoned_chunks == before_status.active_chunks
     assert verify_index(migrated) == (True, ())
-    receipts = list((tmp_path / ".cairn/index.sqlite3.migrations").glob("migration-*.json"))
+    receipts = list((tmp_path / ".steadlith/index.sqlite3.migrations").glob("migration-*.json"))
     assert len(receipts) == 1
     assert not pending_migration_path(config_path).exists()
 
@@ -142,7 +142,9 @@ def test_model_migration_persists_config_history_and_rolls_back(tmp_path: Path) 
     assert rollback_status.generation == migrated_status.generation + 1
     assert rollback_status.tombstoned_chunks == before_status.active_chunks * 2
     assert verify_index(rolled_back) == (True, ())
-    assert len(list((tmp_path / ".cairn/index.sqlite3.migrations").glob("migration-*.json"))) == 2
+    assert (
+        len(list((tmp_path / ".steadlith/index.sqlite3.migrations").glob("migration-*.json"))) == 2
+    )
 
 
 def test_chunker_migration_requires_delete_confirmation_and_persists_parameters(
@@ -284,7 +286,7 @@ def test_preview_has_no_logical_writes_or_provider_calls(
     assert index_status(load_config(config_path)) == before_status
     assert verify_index(load_config(config_path)) == before_verify
     assert not pending_migration_path(config_path).exists()
-    assert not (tmp_path / ".cairn/index.sqlite3.migrations").exists()
+    assert not (tmp_path / ".steadlith/index.sqlite3.migrations").exists()
 
 
 def test_recovery_finishes_config_after_committed_index(

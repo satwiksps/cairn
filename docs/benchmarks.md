@@ -1,6 +1,6 @@
 # Reproducible benchmark results
 
-These tables are the regression baseline for Cairn 0.2.0. They were generated on 2026-08-16 from the five versioned corpora and eight gold questions bundled with the package.
+These tables are the regression baseline carried into Steadlith 0.3.0. They were generated on 2026-08-16 from the five versioned corpora and eight gold questions bundled with the package.
 
 The corpora represent a technical manual, documentation site, legal agreement, small code repository, and wiki. Churn applies nine deterministic edits to each corpus: sentence, paragraph, and section insertion; sentence and paragraph deletion; same-length replacement; section reorder; append; and global replacement.
 
@@ -30,16 +30,16 @@ All strategies answer the same eight exact-evidence questions. Recall is measure
 | cdc-rabin | 1.000 | 0.923 | 1.000 | 0.866 |
 | cdc-rabin+snap | 1.000 | 1.000 | 1.000 | 0.929 |
 
-The default `cdc-rabin` strategy preserves recall@5 on every bundled question. Its ranking score is lower than fixed chunking on this small fixture, which is why Cairn reports retrieval alongside churn instead of claiming cost savings alone.
+The default `cdc-rabin` strategy preserves recall@5 on every bundled question. Its ranking score is lower than fixed chunking on this small fixture, which is why Steadlith reports retrieval alongside churn instead of claiming cost savings alone.
 
 ## Reproduce
 
 From an installed release or source checkout:
 
 ```bash
-cairn-rag measure churn --json
-cairn-rag measure retrieval --scoring lexical --json
-cairn-rag measure retrieval --scoring hash-embedding --json
+steadlith measure churn --json
+steadlith measure retrieval --scoring lexical --json
+steadlith measure retrieval --scoring hash-embedding --json
 ```
 
 The full JSON output contains every corpus, edit, question, and retained ranking. CI enforces a maximum 35% weighted re-embed fraction for both CDC strategies, recall@5 of 1.0 for default CDC, lexical nDCG@10 of at least 0.90, and hash nDCG@10 of at least 0.85.

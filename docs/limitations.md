@@ -1,16 +1,16 @@
 # Limitations and risk register
 
-Cairn has a deliberately narrow supported scope. This page records the boundaries that remain after the local reference workflow and v1 identity contract were stabilized.
+Steadlith has a deliberately narrow supported scope. This page records the boundaries that remain after the local reference workflow and v1 identity contract were stabilized.
 
 ## Built-in results do not replace corpus-specific evaluation
 
-The project publishes a reproducible comparison across five versioned fixture corpora, nine edit operations, five chunkers, and two offline retrieval scorers. Those results are regression evidence for Cairn's implementation, not a claim about every private corpus or embedding model; see [benchmarks](benchmarks.md).
+The project publishes a reproducible comparison across five versioned fixture corpora, nine edit operations, five chunkers, and two offline retrieval scorers. Those results are regression evidence for Steadlith's implementation, not a claim about every private corpus or embedding model; see [benchmarks](benchmarks.md).
 
 Content-defined chunks may retrieve worse than semantic or structure-aware chunks. No cost reduction compensates for a material quality regression. Evaluate recall, nDCG, answer quality, latency, and churn on representative private data before choosing a strategy.
 
 ## Best-case workload is specific
 
-Cairn is designed for large documents with edits that are small relative to the source. It is less useful when documents are short, regenerated wholesale, heavily normalized upstream, or replaced under new identifiers. Global find-and-replace can legitimately invalidate most chunks.
+Steadlith is designed for large documents with edits that are small relative to the source. It is less useful when documents are short, regenerated wholesale, heavily normalized upstream, or replaced under new identifiers. Global find-and-replace can legitimately invalidate most chunks.
 
 ## Boundary quality is not semantic quality
 
@@ -24,7 +24,7 @@ Structure-aware Markdown, HTML, code, tables, figures, and PDFs are unsupported 
 
 The rolling fingerprint candidates are local, but the current `tttd-v1` segmentation rule also measures minimum and maximum sizes from the preceding emitted boundary. Maximum-size hard cuts can therefore reintroduce downstream drift. Choosing the most recent backup candidate does not remove the state dependency: two runs can remain in different backup-boundary phases beyond the proposed fixed locality margin even when neither run reports a hard cut. A later common primary boundary often resynchronizes ordinary inputs, but the current algorithm provides no fixed-distance guarantee.
 
-Hard-cut rate and measured churn must remain visible in `cairn-rag status` and benchmark reports, but a low hard-cut rate is diagnostic evidence rather than proof of locality. The fixed-margin formula in the algorithm document is an acceptance criterion for any strategy that claims strict locality, not a guarantee of the bundled strategy.
+Hard-cut rate and measured churn must remain visible in `steadlith status` and benchmark reports, but a low hard-cut rate is diagnostic evidence rather than proof of locality. The fixed-margin formula in the algorithm document is an acceptance criterion for any strategy that claims strict locality, not a guarantee of the bundled strategy.
 
 Adversarial or highly repetitive input can produce unusual Rabin boundary distributions. Do not assume an average target is a strict bound beyond the configured minimum/maximum enforcement.
 
@@ -34,7 +34,7 @@ Whitespace normalization intentionally treats some source representations as equ
 
 Tokenizer-independent word boundaries do not remove tokenization concerns: chunk limits still rely on a deterministic token count or estimate. A model may count differently, so providers must validate their actual input limit. Changing normalization, token counting, or boundary parameters changes chunk identity and can cause a broad migration.
 
-Chunk identity `cairn-chunk-identity-v1` is frozen. Changing normalization, rolling-hash behavior, boundary rules, token accounting, or hash serialization requires a new versioned identity and an explicit migration; see [compatibility](compatibility.md).
+The v1 chunk identity is frozen. Changing normalization, rolling-hash behavior, boundary rules, token accounting, or hash serialization requires a new versioned identity and an explicit migration; see [compatibility](compatibility.md).
 
 ## Snapping requires additional review
 
@@ -68,7 +68,7 @@ Redistributing embeddings can violate data licenses, privacy obligations, or pro
 
 ## Merkle roots are integrity identifiers, not signatures
 
-A matching root demonstrates equality under Cairn's canonical hashing rules. It does not establish who produced a manifest or whether an attacker replaced both the manifest and root. Use signed releases, trusted storage, or a separate signature mechanism where authenticity matters.
+A matching root demonstrates equality under Steadlith's canonical hashing rules. It does not establish who produced a manifest or whether an attacker replaced both the manifest and root. Use signed releases, trusted storage, or a separate signature mechanism where authenticity matters.
 
 ## Algorithm research remains open
 

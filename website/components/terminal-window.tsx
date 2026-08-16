@@ -16,7 +16,7 @@ export function TerminalWindow() {
           <span className="window-dot" />
           <span className="window-dot" />
         </div>
-        <div className="terminal-title">cairn-rag / terminal</div>
+        <div className="terminal-title">steadlith / terminal</div>
         <div className="terminal-branch">main</div>
       </div>
 
@@ -28,7 +28,7 @@ export function TerminalWindow() {
 
       <div className="terminal-body">
         <div className="terminal-command">
-          <span className="prompt">$</span> cairn-rag plan
+          <span className="prompt">$</span> steadlith plan
         </div>
 
         <div className="plan-grid">
@@ -62,14 +62,14 @@ export function TerminalWindow() {
         <div className="terminal-rule" />
 
         <div className="terminal-command terminal-command-spaced">
-          <span className="prompt">$</span> cairn-rag index --allow-delete
+          <span className="prompt">$</span> steadlith index --allow-delete
         </div>
         <div className="terminal-output">
           Applied <span>190 active</span>, embedded <span>2</span>, tombstoned <span>1</span>
         </div>
 
         <div className="terminal-command terminal-command-spaced">
-          <span className="prompt">$</span> cairn-rag verify
+          <span className="prompt">$</span> steadlith verify
         </div>
         <div className="verify-line">
           <span className="verify-icon">

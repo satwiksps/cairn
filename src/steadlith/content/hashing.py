@@ -1,0 +1,86 @@
+"""Canonical, domain-separated content hashes used by Steadlith."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from collections.abc import Iterable, Mapping
+from typing import Any
+
+from steadlith._legacy_wire import (
+    V1_BYTES_DOMAIN,
+    V1_CHUNK_DOMAIN,
+    V1_IDENTITY_SCHEMA,
+    V1_JSON_DOMAIN,
+    V1_TEXT_DOMAIN,
+)
+
+HASH_ALGORITHM = "sha256"
+IDENTITY_SCHEMA_VERSION = V1_IDENTITY_SCHEMA
+SUPPORTED_IDENTITY_SCHEMA_VERSIONS = frozenset({IDENTITY_SCHEMA_VERSION})
+
+
+def _field_bytes(value: str | bytes) -> bytes:
+    return value if isinstance(value, bytes) else value.encode("utf-8")
+
+
+def hash_fields(domain: str, fields: Iterable[str | bytes]) -> str:
+    """Hash length-delimited fields, preventing concatenation ambiguity."""
+
+    digest = hashlib.sha256()
+    domain_bytes = domain.encode("ascii")
+    digest.update(len(domain_bytes).to_bytes(4, "big"))
+    digest.update(domain_bytes)
+    for field in fields:
+        encoded = _field_bytes(field)
+        digest.update(len(encoded).to_bytes(8, "big"))
+        digest.update(encoded)
+    return digest.hexdigest()
+
+
+def hash_bytes(value: bytes, *, domain: str = V1_BYTES_DOMAIN) -> str:
+    return hash_fields(domain, (value,))
+
+
+def hash_text(value: str, *, domain: str = V1_TEXT_DOMAIN) -> str:
+    return hash_fields(domain, (value,))
+
+
+def canonical_json_hash(value: Mapping[str, Any], *, domain: str = V1_JSON_DOMAIN) -> str:
+    encoded = json.dumps(
+        value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False
+    )
+    return hash_fields(domain, (encoded,))
+
+
+def chunk_content_hash(
+    chunk_text: str,
+    *,
+    chunker_id: str,
+    chunker_params_hash: str,
+    normalizer_version: str,
+    identity_schema_version: str = IDENTITY_SCHEMA_VERSION,
+) -> str:
+    """Return a chunk identity independent of any embedding model.
+
+    Embedding provider/model parameters deliberately do not appear in this
+    interface.  They belong in the embedding-cache key alongside this hash.
+    """
+
+    if identity_schema_version not in SUPPORTED_IDENTITY_SCHEMA_VERSIONS:
+        raise ValueError(f"unsupported chunk identity schema: {identity_schema_version!r}")
+    if not chunker_id or not chunker_params_hash or not normalizer_version:
+        raise ValueError("chunk identity fields cannot be empty")
+    return hash_fields(
+        V1_CHUNK_DOMAIN,
+        (
+            identity_schema_version,
+            normalizer_version,
+            chunker_id,
+            chunker_params_hash,
+            chunk_text,
+        ),
+    )
+
+
+chunk_hash = chunk_content_hash

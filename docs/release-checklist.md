@@ -1,12 +1,22 @@
 # Release checklist
 
-Use this checklist for every public release. Do not set `CAIRN_RELEASE_ENABLED=true` until the PyPI publisher and release metadata are ready.
+Use this checklist for every public release. Do not set `STEADLITH_RELEASE_ENABLED=true` until the PyPI publisher and release metadata are ready.
 
 ## Ownership and namespace
 
-- Confirm the `cairn-rag` PyPI project and trusted publisher configuration.
+- Confirm the `steadlith` PyPI project and trusted publisher configuration.
 - Confirm the version and maintainer metadata in `pyproject.toml`, `CHANGELOG.md`, and `CITATION.cff`.
 - Confirm the production website URL and repository links.
+
+For the first Steadlith release:
+
+- Rename the GitHub repository to `satwiksps/steadlith` before creating the release tag.
+- On PyPI, create a pending trusted publisher for project `steadlith`, owner `satwiksps`, repository `steadlith`, workflow `release.yml`, and environment `pypi`.
+- Keep the existing PyPI releases under their old distribution name as historical upgrade sources. Publish new versions only as `steadlith`.
+- Create or verify the GitHub `pypi` environment, then set the repository Actions variable `STEADLITH_RELEASE_ENABLED=true` only when publishing is ready.
+- After the new release is verified, remove the obsolete `CAIRN_RELEASE_ENABLED` variable and the old distribution's trusted publisher. Do not delete its published releases.
+- Activate the renamed repository in Codecov. Coverage upload is non-blocking until that account setup is complete.
+- Create the Steadlith Vercel project, set `NEXT_PUBLIC_SITE_URL` to its canonical URL, and verify `NEXT_PUBLIC_REPOSITORY_URL` if it is overridden.
 
 ## Security and governance
 
@@ -24,9 +34,9 @@ Use this checklist for every public release. Do not set `CAIRN_RELEASE_ENABLED=t
 ## Artifact procedure
 
 1. Delete local build artifacts through a scoped, verified path and rebuild from the intended commit.
-2. Run `python -m ruff check .`, `python -m ruff format --check .`, `python -m mypy src/cairn_rag`, and `python -m pytest`.
+2. Run `python -m ruff check .`, `python -m ruff format --check .`, `python -m mypy src/steadlith`, and `python -m pytest`.
 3. Run `python -m build` and `python -m twine check dist/*`.
-4. Inspect the wheel: it must contain only the `cairn_rag` package and only the `cairn-rag` console entry point.
-5. Install that wheel into a clean environment and smoke-test `python -m cairn_rag`, `cairn-rag --version`, `plan`, `index`, `query --json`, and `verify`.
+4. Inspect the wheel: it must contain only the `steadlith` package and only the `steadlith` console entry point.
+5. Install that wheel into a clean environment and smoke-test `python -m steadlith`, `steadlith --version`, `plan`, `index`, `query --json`, `verify`, and adoption of a disposable 0.2 fixture.
 6. Run `npm ci`, `npm run lint`, `npm run typecheck`, and `npm run build` from `website/`.
 7. Tag exactly the version declared in `pyproject.toml`, publish a GitHub release, and enable trusted PyPI publishing only after the preceding checks pass.

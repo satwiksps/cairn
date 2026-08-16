@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import {
-  CairnMark,
   CheckIcon,
   GitHubIcon,
   ShieldIcon,
+  SteadlithMark,
 } from "@/components/icons";
 import { SiteHeader } from "@/components/site-header";
 import { TerminalWindow } from "@/components/terminal-window";
@@ -73,7 +73,7 @@ export default function Home() {
               </div>
               <h1>Incremental indexing for RAG corpora that change.</h1>
               <p className="hero-lede">
-                Cairn combines content-defined chunk identities, cache-aware planning, and
+                Steadlith combines content-defined chunk identities, cache-aware planning, and
                 transactional updates so every revision becomes an explicit, inspectable index
                 operation.
               </p>
@@ -87,10 +87,10 @@ export default function Home() {
               </div>
               <div className="install-line" aria-label="Installation command">
                 <span className="prompt">$</span>
-                <code>python -m pip install cairn-rag</code>
+                <code>python -m pip install steadlith</code>
               </div>
               <p className="release-note">
-                Version 0.2.0 is available on{" "}
+                Install the current release from{" "}
                 <a href={packageUrl} target="_blank" rel="noopener noreferrer">
                   PyPI
                 </a>
@@ -111,11 +111,11 @@ export default function Home() {
 
         <section id="why" className="section shell scroll-mt-24">
           <div className="section-intro section-intro-wide">
-            <p className="section-label">WHY CAIRN</p>
+            <p className="section-label">WHY STEADLITH</p>
             <h2>A small edit should be visible as a small change plan.</h2>
             <p>
               Offset-based chunking can shift downstream boundaries after an early insertion,
-              changing hashes for content that is otherwise unchanged. Cairn places candidate
+              changing hashes for content that is otherwise unchanged. Steadlith places candidate
               boundaries from a rolling fingerprint over normalized words, then compares
               versioned manifests to classify what changed.
             </p>
@@ -124,8 +124,8 @@ export default function Home() {
           <div className="positioning-line">
             <span className="positioning-rule" aria-hidden="true" />
             <p>
-              A focused indexing layer, not another RAG framework. Cairn sits below orchestration
-              libraries and above embedding and vector providers.
+              A focused indexing layer, not another RAG framework. Steadlith sits below
+              orchestration libraries and above embedding and vector providers.
             </p>
           </div>
 
@@ -151,7 +151,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="architecture-flow" aria-label="Cairn indexing architecture">
+            <div className="architecture-flow" aria-label="Steadlith indexing architecture">
               <div className="flow-node">
                 <span>Input</span>
                 <strong>Source text</strong>
@@ -199,7 +199,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="code-panel" aria-label="Cairn quick start commands">
+            <div className="code-panel" aria-label="Steadlith quick start commands">
               <div className="code-panel-header">
                 <span>quick-start.sh</span>
                 <span>offline</span>
@@ -207,13 +207,13 @@ export default function Home() {
               <pre>
                 <code>
                   <span className="code-muted"># create a local configuration</span>{"\n"}
-                  <span className="code-command">cairn-rag init</span>{"\n\n"}
+                  <span className="code-command">steadlith init</span>{"\n\n"}
                   <span className="code-muted"># inspect before any write</span>{"\n"}
-                  <span className="code-command">cairn-rag plan</span>{"\n\n"}
-                  <span className="code-command">cairn-rag index</span>{"\n"}
-                  <span className="code-command">cairn-rag status</span>{"\n"}
-                  <span className="code-command">cairn-rag query &quot;release policy&quot;</span>{"\n"}
-                  <span className="code-command">cairn-rag verify</span>
+                  <span className="code-command">steadlith plan</span>{"\n\n"}
+                  <span className="code-command">steadlith index</span>{"\n"}
+                  <span className="code-command">steadlith status</span>{"\n"}
+                  <span className="code-command">steadlith query &quot;release policy&quot;</span>{"\n"}
+                  <span className="code-command">steadlith verify</span>
                 </code>
               </pre>
             </div>
@@ -263,7 +263,7 @@ export default function Home() {
             </p>
           </div>
 
-          <dl className="support-table" aria-label="Current Cairn support">
+          <dl className="support-table" aria-label="Current Steadlith support">
             {support.map(([component, detail]) => (
               <div className="support-row" key={component}>
                 <dt className="support-component">{component}</dt>
@@ -286,8 +286,8 @@ export default function Home() {
               </p>
               <p>
                 The stateful fallback can remain out of phase until a common primary boundary.
-                Cairn keeps the counterexample as a regression and reports measured churn instead
-                of turning an empirical result into a theorem.
+                Steadlith keeps the counterexample as a regression and reports measured churn
+                instead of turning an empirical result into a theorem.
               </p>
               <p>
                 Across the bundled five-corpus benchmark, default CDC re-embeds 32.7% of revised
@@ -299,9 +299,9 @@ export default function Home() {
         </section>
 
         <section id="open-source" className="final-section shell">
-          <CairnMark className="mx-auto h-10 w-10 text-[var(--accent)]" />
+          <SteadlithMark className="mx-auto h-10 w-10 text-[var(--accent)]" />
           <p className="section-label mt-7">APACHE-2.0 OPEN SOURCE</p>
-          <h2>Evaluate Cairn on your corpus.</h2>
+          <h2>Evaluate Steadlith on your corpus.</h2>
           <p>
             Start offline, inspect the delta, then measure churn and retrieval quality before
             connecting a paid provider.
@@ -335,8 +335,8 @@ export default function Home() {
       <footer className="site-footer">
         <div className="shell footer-grid">
           <div className="footer-brand">
-            <CairnMark className="h-6 w-6 text-[var(--accent)]" />
-            <span>Cairn</span>
+            <SteadlithMark className="h-6 w-6 text-[var(--accent)]" />
+            <span>Steadlith</span>
           </div>
           <p>Stable identities. Inspectable plans. Explicit state.</p>
           <div className="footer-links">

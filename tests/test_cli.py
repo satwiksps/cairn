@@ -7,19 +7,19 @@ from pathlib import Path
 
 import pytest
 
-from cairn_rag.cli import main
-from cairn_rag.errors import ExitCode
+from steadlith.cli import main
+from steadlith.errors import ExitCode
 
 
 def test_init_status_and_verify_exit_codes(tmp_path: Path) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     assert main(["init", "--config", str(config)]) == ExitCode.SUCCESS
     assert main(["status", "--config", str(config), "--json"]) == ExitCode.SUCCESS
     assert main(["verify", "--config", str(config), "--json"]) == ExitCode.VERIFICATION_MISMATCH
 
 
 def test_init_json_is_machine_readable(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
 
     assert main(["init", "--config", str(config), "--json"]) == ExitCode.SUCCESS
 
@@ -34,13 +34,13 @@ def test_human_output_survives_a_legacy_windows_code_page(
     raw = BytesIO()
     output = TextIOWrapper(raw, encoding="cp1252", errors="strict")
     monkeypatch.setattr(sys, "stdout", output)
-    config = tmp_path / "cairn-≥.toml"
+    config = tmp_path / "steadlith-≥.toml"
 
     assert main(["init", "--config", str(config)]) == ExitCode.SUCCESS
     output.flush()
 
     rendered = raw.getvalue().decode("cp1252")
-    assert "cairn-\\u2265.toml" in rendered
+    assert "steadlith-\\u2265.toml" in rendered
 
 
 def test_missing_config_uses_config_exit_code(tmp_path: Path) -> None:
@@ -60,7 +60,7 @@ def test_json_errors_remain_machine_readable(
 
 
 def test_compact_rejects_ambiguous_or_invalid_cutoff(tmp_path: Path) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     assert main(["init", "--config", str(config)]) == ExitCode.SUCCESS
     assert (
         main(["compact", "--before", "2026-08-15", "--config", str(config)])
@@ -70,7 +70,7 @@ def test_compact_rejects_ambiguous_or_invalid_cutoff(tmp_path: Path) -> None:
 
 
 def test_migration_apply_requires_an_existing_index(tmp_path: Path) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     assert main(["init", "--config", str(config)]) == ExitCode.SUCCESS
 
     assert (
@@ -86,7 +86,7 @@ def test_migration_apply_requires_an_existing_index(tmp_path: Path) -> None:
         )
         == ExitCode.CONFIG_ERROR
     )
-    assert not (tmp_path / ".cairn/index.sqlite3").exists()
+    assert not (tmp_path / ".steadlith/index.sqlite3").exists()
 
 
 @pytest.mark.parametrize(
@@ -102,7 +102,7 @@ def test_measurement_argument_errors_are_typed(arguments: list[str]) -> None:
 
 
 def test_index_requires_explicit_deletion_and_empty_corpus_confirmation(tmp_path: Path) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     assert main(["init", "--config", str(config)]) == ExitCode.SUCCESS
     config.write_text(
         config.read_text(encoding="utf-8").replace(
@@ -138,7 +138,7 @@ def test_index_requires_explicit_deletion_and_empty_corpus_confirmation(tmp_path
 
 
 def test_non_demo_provider_requires_explicit_network_confirmation(tmp_path: Path) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     config.write_text(
         '[embedding]\nprovider = "openai"\nmodel = "text-embedding-test"\n',
         encoding="utf-8",
@@ -150,7 +150,7 @@ def test_non_demo_provider_requires_explicit_network_confirmation(tmp_path: Path
 def test_query_returns_machine_readable_active_results(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     assert main(["init", "--config", str(config)]) == ExitCode.SUCCESS
     config.write_text(
         config.read_text(encoding="utf-8").replace(
@@ -190,7 +190,7 @@ def test_query_returns_machine_readable_active_results(
 
 
 def test_query_argument_errors_are_typed(tmp_path: Path) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     assert main(["init", "--config", str(config)]) == ExitCode.SUCCESS
     assert (
         main(["query", "hello", "--limit", "0", "--config", str(config)]) == ExitCode.CONFIG_ERROR
@@ -200,7 +200,7 @@ def test_query_argument_errors_are_typed(tmp_path: Path) -> None:
 def test_status_distinguishes_embedding_identity_drift(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    config = tmp_path / "cairn.toml"
+    config = tmp_path / "steadlith.toml"
     assert main(["init", "--config", str(config)]) == ExitCode.SUCCESS
     config.write_text(
         config.read_text(encoding="utf-8").replace(
@@ -214,7 +214,7 @@ def test_status_distinguishes_embedding_identity_drift(
     assert main(["index", "--config", str(config), "--json"]) == ExitCode.SUCCESS
     config.write_text(
         config.read_text(encoding="utf-8").replace(
-            'model = "cairn-hash-256-v1"', 'model = "cairn-hash-256-v2"'
+            'model = "steadlith-hash-256-v1"', 'model = "steadlith-hash-256-v2"'
         ),
         encoding="utf-8",
     )

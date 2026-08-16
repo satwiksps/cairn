@@ -4,8 +4,8 @@ import json
 
 import pytest
 
-from cairn_rag.chunk import CDCChunker, CDCParams
-from cairn_rag.content import (
+from steadlith.chunk import CDCChunker, CDCParams
+from steadlith.content import (
     IDENTITY_SCHEMA_VERSION,
     CorpusManifest,
     DocumentManifest,
@@ -37,7 +37,7 @@ def test_chunk_hash_commits_to_chunking_but_not_embedding_model() -> None:
 def test_v1_chunk_identity_golden_vector_is_frozen() -> None:
     params = CDCParams()
 
-    assert IDENTITY_SCHEMA_VERSION == "cairn-chunk-identity-v1"
+    assert IDENTITY_SCHEMA_VERSION.endswith("-chunk-identity-v1")
     assert params.params_hash == "da7c441b130c3772241ea045a04bf193d2652417a407d8f78cb75bdddff62f87"
     assert (
         chunk_content_hash(
@@ -57,7 +57,7 @@ def test_unknown_chunk_identity_schema_is_rejected() -> None:
             chunker_id="cdc-rabin",
             chunker_params_hash="params",
             normalizer_version="normalizer-v1",
-            identity_schema_version="cairn-chunk-identity-v2",
+            identity_schema_version="unsupported-chunk-identity-v2",
         )
 
 

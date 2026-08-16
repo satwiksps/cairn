@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from cairn_rag.chunk.snap import snap_boundary_details
-from cairn_rag.chunk.stream import NORMALIZER_VERSION, normalize_stream, normalize_text
+from steadlith.chunk.snap import snap_boundary_details
+from steadlith.chunk.stream import NORMALIZER_VERSION, normalize_stream, normalize_text
 
 
 def test_normalization_collapses_whitespace_and_preserves_paragraphs() -> None:

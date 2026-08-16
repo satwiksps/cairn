@@ -8,7 +8,7 @@ Security fixes are applied to the latest published minor release and the `main` 
 
 Do not open a public issue for a suspected vulnerability.
 
-Use [GitHub private vulnerability reporting](https://github.com/satwiksps/cairn/security/advisories/new). If that form is unavailable, email **sahoospsatwik@gmail.com** with the subject `Cairn security report`.
+Use [GitHub private vulnerability reporting](https://github.com/satwiksps/steadlith/security/advisories/new). If that form is unavailable, email **sahoospsatwik@gmail.com** with the subject `Steadlith security report`.
 
 Include, when possible:
 
@@ -24,8 +24,10 @@ The maintainer will acknowledge a report within 72 hours, keep the reporter info
 
 ## Security boundaries
 
-Cairn processes user-selected documents and can send their contents to a configured embedding provider. Review configuration before use, keep provider credentials in environment variables, and grant `--allow-network` only when the destination is trusted.
+Steadlith processes user-selected documents and can send their contents to a configured embedding provider. Review configuration before use, keep provider credentials in environment variables, and grant `--allow-network` only when the destination is trusted.
 
-Cache imports are unsigned and must come from a trusted source. SQLite database, cache, manifest, migration receipt, and configuration files should be protected with normal operating-system access controls. Cairn does not provide encryption at rest or sandbox third-party embedding models.
+Cache imports are unsigned and must come from a trusted source. SQLite database, cache, manifest, migration receipt, and configuration files should be protected with normal operating-system access controls. Steadlith does not provide encryption at rest or sandbox third-party embedding models.
 
-The deterministic hash embedder is test infrastructure and provides no confidentiality or production retrieval guarantees.
+The deterministic hash provider supports offline exact-term and keyword retrieval. It has no
+learned semantic model and provides no confidentiality guarantee. Evaluate a learned provider on
+representative data when queries depend on synonyms, paraphrases, or domain meaning.

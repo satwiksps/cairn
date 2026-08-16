@@ -1,15 +1,15 @@
 # Compatibility policy
 
-Cairn separates content identity from package version so existing indexes remain explainable across upgrades.
+Steadlith separates content identity from package version so existing indexes remain explainable across upgrades.
 
 ## Stable chunk identity
 
-`cairn-chunk-identity-v1` is frozen. Given identical canonical text, normalization version, chunker name, and chunker-parameter hash, supported Cairn releases produce the same SHA-256 chunk hash.
+The v1 chunk identity is frozen. Given identical canonical text, normalization version, chunker name, and chunker-parameter hash, supported releases produce the same SHA-256 chunk hash.
 
 The v1 contract includes:
 
 - length-delimited hash serialization;
-- `cairn-normalizer-v1` whitespace and paragraph normalization;
+- versioned whitespace and paragraph normalization;
 - the tokenizer identity;
 - rolling-hash and boundary-rule identities;
 - minimum, maximum, mask, window, and snapping parameters;
@@ -19,9 +19,19 @@ The embedding provider and model are intentionally outside the chunk hash. They 
 
 Golden-vector tests pin the default parameter hash and a representative chunk hash. A future incompatible algorithm must use a new normalizer, boundary-rule, parameter, or identity version. It must not reinterpret v1 data.
 
+Steadlith 0.3 keeps the v1 chunk, Merkle, record, and hash wire domains from Cairn 0.2 byte-for-byte. Some stored identifiers therefore retain the former name. These values are isolated as immutable compatibility data. They are not package, module, command, configuration-file, or state-directory names. Renaming them would change hashes and invalidate existing indexes and cached embeddings.
+
 ## Configuration and migrations
 
-Changing an identity-bearing setting creates new chunk identities. `cairn-rag plan` shows the resulting work, and `cairn-rag migrate --dry-run` prices a chunker or embedding change before it is applied.
+Changing an identity-bearing setting creates new chunk identities. `steadlith plan` shows the resulting work, and `steadlith migrate --dry-run` prices a chunker or embedding change before it is applied.
+
+To adopt a 0.2 project without recomputing its state, run:
+
+```bash
+steadlith adopt --from-config cairn.toml --config steadlith.toml
+```
+
+The command validates the old configuration and writes a normalized Steadlith configuration. It preserves existing cache and index paths and the configured model identity. It refuses an output file that already exists, paths outside the project, and adoption while a migration journal is pending. It never runs automatically.
 
 Manifests and SQLite state carry explicit schema versions. Unsupported versions fail closed rather than being read as a newer format.
 

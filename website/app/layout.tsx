@@ -40,10 +40,10 @@ export const metadata: Metadata = {
         siteName: site.name,
         images: [
           {
-            url: "/cairn-social-card.jpg",
+            url: "/steadlith-social-card.jpg",
             width: 1732,
             height: 908,
-            alt: "Cairn social card",
+            alt: "Steadlith social card",
           },
         ],
       }
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
         card: "summary_large_image",
         title: site.title,
         description: site.description,
-        images: ["/cairn-social-card.jpg"],
+        images: ["/steadlith-social-card.jpg"],
       }
     : undefined,
 };

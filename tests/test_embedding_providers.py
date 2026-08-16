@@ -5,10 +5,10 @@ from types import ModuleType, SimpleNamespace
 
 import pytest
 
-from cairn_rag.embed.providers.hash import HashEmbeddingProvider
-from cairn_rag.embed.providers.openai import OpenAIEmbeddingProvider
-from cairn_rag.embed.providers.sentence_transformers import SentenceTransformersProvider
-from cairn_rag.errors import ProviderError, TransientProviderError
+from steadlith.embed.providers.hash import HashEmbeddingProvider
+from steadlith.embed.providers.openai import OpenAIEmbeddingProvider
+from steadlith.embed.providers.sentence_transformers import SentenceTransformersProvider
+from steadlith.errors import ProviderError, TransientProviderError
 
 
 def test_hash_provider_rejects_unbounded_or_ambiguous_dimensions() -> None:

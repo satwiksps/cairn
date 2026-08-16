@@ -35,15 +35,14 @@ export const siteUrl = new URL(canonicalUrl ?? "http://localhost:3000");
 
 export const repositoryUrl = readHttpsUrl(
   "NEXT_PUBLIC_REPOSITORY_URL",
-  process.env.NEXT_PUBLIC_REPOSITORY_URL ?? "https://github.com/satwiksps/cairn",
+  process.env.NEXT_PUBLIC_REPOSITORY_URL ?? "https://github.com/satwiksps/steadlith",
 )?.toString();
 
-export const packageUrl = "https://pypi.org/project/cairn-rag/";
+export const packageUrl = "https://pypi.org/project/steadlith/";
 
 export const site = {
-  name: "Cairn",
-  title: "Cairn",
+  name: "Steadlith",
+  title: "Steadlith",
   description:
     "Content-defined chunk identities, cache-aware planning, and transactional indexing for RAG corpora that change.",
-  version: "v0.2.0",
 } as const;

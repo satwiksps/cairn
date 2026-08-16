@@ -112,16 +112,6 @@ pre {
   color: var(--text);
 }
 
-.version-badge {
-  align-items: center;
-  height: 30px;
-  border: 1px solid var(--line);
-  padding-inline: 10px;
-  color: var(--muted-strong);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 11px;
-}
-
 .icon-button,
 .small-button,
 .primary-button,

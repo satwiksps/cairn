@@ -1,0 +1,35 @@
+# Minimal offline-friendly Steadlith configuration.
+#
+# The hash provider gives deterministic offline exact-term and keyword retrieval.
+# Use a learned provider when queries depend on synonyms or semantic similarity.
+
+[chunker]
+strategy = "cdc-rabin"
+window_words = 48
+min_tokens = 180
+max_tokens = 640
+
+# Snapping is experimental and opt-in. Leave it disabled unless you have
+# evaluated retrieval behavior and completed any appropriate patent review.
+# To opt in, change strategy above to "cdc-rabin+snap".
+snap_window_words = 24
+primary_mask_bits = 8
+backup_mask_bits = 6
+
+[embedding]
+provider = "hash"
+model = "steadlith-hash-256-v1"
+dimensions = 256
+batch_size = 64
+price_per_million_tokens = 0.0
+
+[store]
+cache = ".steadlith/cache.sqlite3"
+
+[index]
+backend = "sqlite"
+database = ".steadlith/index.sqlite3"
+
+[sources]
+include = ["docs/**/*.md"]
+exclude = ["**/drafts/**", "**/.*/**"]

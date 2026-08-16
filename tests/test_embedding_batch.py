@@ -6,10 +6,10 @@ from typing import NoReturn
 
 import pytest
 
-from cairn_rag.embed.batch import EmbeddingInput, embed_with_cache
-from cairn_rag.embed.providers.hash import HashEmbeddingProvider
-from cairn_rag.errors import BackendError, ProviderError
-from cairn_rag.store import Cache
+from steadlith.embed.batch import EmbeddingInput, embed_with_cache
+from steadlith.embed.providers.hash import HashEmbeddingProvider
+from steadlith.errors import BackendError, ProviderError
+from steadlith.store import Cache
 
 
 def test_batches_resume_from_content_addressed_cache(tmp_path: Path) -> None:

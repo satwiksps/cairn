@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from cairn_rag.errors import BackendError
-from cairn_rag.store import Cache
+from steadlith.errors import BackendError
+from steadlith.store import Cache
 
 
 def test_cache_key_separates_embedding_models(tmp_path: Path) -> None:

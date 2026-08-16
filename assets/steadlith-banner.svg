@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="360" viewBox="0 0 1440 360" role="img" aria-labelledby="title description">
+  <title id="title">Steadlith</title>
+  <desc id="description">Steadlith project banner with stable content blocks</desc>
+  <rect width="1440" height="360" rx="20" fill="#080a0b"/>
+  <g stroke="#26312b" stroke-width="1" opacity="0.65">
+    <path d="M720 54H1386M720 114H1386M720 174H1386M720 234H1386M720 294H1386"/>
+    <path d="M786 24V336M906 24V336M1026 24V336M1146 24V336M1266 24V336M1386 24V336"/>
+  </g>
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+    <text x="92" y="185" fill="#f3f6f4" font-size="68" font-weight="680" letter-spacing="12">STEADLITH</text>
+    <text x="98" y="228" fill="#8ce8b3" font-size="20" font-weight="520" letter-spacing="3">CONTENT-DEFINED INDEXING</text>
+  </g>
+  <g transform="translate(850 71)">
+    <g fill="#171c19" stroke="#3a443f" stroke-width="2">
+      <rect x="0" y="136" width="124" height="46" rx="12"/>
+      <rect x="14" y="82" width="96" height="46" rx="12"/>
+      <rect x="30" y="28" width="64" height="46" rx="12"/>
+      <rect x="156" y="158" width="124" height="46" rx="12"/>
+      <rect x="170" y="104" width="96" height="46" rx="12"/>
+      <rect x="186" y="50" width="64" height="46" rx="12"/>
+      <rect x="312" y="124" width="124" height="46" rx="12"/>
+      <rect x="326" y="70" width="96" height="46" rx="12"/>
+    </g>
+    <g fill="#8ce8b3" stroke="#b8f3d0" stroke-width="2">
+      <rect x="14" y="82" width="96" height="46" rx="12" opacity="0.78"/>
+      <rect x="186" y="50" width="64" height="46" rx="12" opacity="0.92"/>
+      <rect x="326" y="70" width="96" height="46" rx="12" opacity="0.72"/>
+    </g>
+    <g stroke="#8ce8b3" stroke-width="2" opacity="0.55">
+      <path d="M62 182V228H218V204M218 150V228H374V170" fill="none"/>
+      <circle cx="62" cy="228" r="4" fill="#8ce8b3"/>
+      <circle cx="218" cy="228" r="4" fill="#8ce8b3"/>
+      <circle cx="374" cy="228" r="4" fill="#8ce8b3"/>
+    </g>
+  </g>
+</svg>

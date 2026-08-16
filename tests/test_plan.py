@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from cairn_rag.content.manifest import CorpusManifest, DocumentManifest
-from cairn_rag.index.plan import OperationKind, create_plan, diff_document
-from cairn_rag.models import ChunkRecord
+from steadlith.content.manifest import CorpusManifest, DocumentManifest
+from steadlith.index.plan import OperationKind, create_plan, diff_document
+from steadlith.models import ChunkRecord
 
 
 def _record(name: str, start: int, end: int, tokens: int = 5) -> ChunkRecord:

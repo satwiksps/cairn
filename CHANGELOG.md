@@ -1,26 +1,32 @@
 # Changelog
 
-All notable changes to Cairn are documented here. The format follows
+All notable changes to Steadlith are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and releases use
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-16
+
 ### Added
 
+- `steadlith adopt` for validating a 0.2 configuration and reusing its existing index and embedding cache under the new command.
 - Codecov reporting with project and patch coverage checks.
 - Repository banner and reusable social card artwork.
 
 ### Changed
 
+- Renamed the project, distribution, Python module, command, configuration, and default state directory to Steadlith.
+- Preserved the v1 wire identities so existing 0.2 indexes and cached embeddings remain reusable.
 - Shortened website metadata and removed decorative arrow symbols from public pages.
 - Grouped Dependabot updates and ignored incompatible toolchain majors.
+- Updated pinned GitHub Actions and made Codecov upload non-blocking until the renamed repository is activated.
 
 ## [0.2.0] - 2026-08-16
 
 ### Added
 
-- A compatibility policy that freezes `cairn-chunk-identity-v1`, backed by golden-vector tests.
+- A compatibility policy that freezes the v1 chunk identity, backed by golden-vector tests.
 - Published five-corpus churn and retrieval tables with CI-enforced regression thresholds.
 - Direct PyPI installation and package links throughout the website and documentation.
 
@@ -49,7 +55,7 @@ All notable changes to Cairn are documented here. The format follows
 
 ### Security
 
-- Source discovery confines inputs to the configured project root and excludes Cairn-managed state.
+- Source discovery confines inputs to the configured project root and excludes project-managed state.
 - Destructive index operations require explicit deletion and empty-corpus consent.
 - Network providers and unsigned cache imports require explicit trust flags.
 
@@ -60,6 +66,7 @@ All notable changes to Cairn are documented here. The format follows
 - The bundled hash embedder is deterministic test infrastructure, not a production retrieval model.
 - Post-anchor structural snapping is experimental and requires project-specific legal review before use.
 
-[Unreleased]: https://github.com/satwiksps/cairn/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/satwiksps/cairn/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/satwiksps/cairn/releases/tag/v0.1.0
+[Unreleased]: https://github.com/satwiksps/steadlith/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/satwiksps/steadlith/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/satwiksps/steadlith/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/satwiksps/steadlith/releases/tag/v0.1.0

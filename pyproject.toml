@@ -3,9 +3,9 @@ requires = ["hatchling>=1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "cairn-rag"
-version = "0.2.0"
-description = "Cairn reuses unchanged RAG chunks with content-defined identities, cache-aware planning, and transactional indexing."
+name = "steadlith"
+version = "0.3.0"
+description = "Steadlith reuses unchanged RAG chunks with content-defined identities, cache-aware planning, and transactional indexing."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -57,13 +57,13 @@ dev = [
 ]
 
 [project.scripts]
-cairn-rag = "cairn_rag.cli:main"
+steadlith = "steadlith.cli:main"
 
 [project.urls]
-Repository = "https://github.com/satwiksps/cairn"
-Issues = "https://github.com/satwiksps/cairn/issues"
-Documentation = "https://github.com/satwiksps/cairn/tree/main/docs"
-Changelog = "https://github.com/satwiksps/cairn/blob/main/CHANGELOG.md"
+Repository = "https://github.com/satwiksps/steadlith"
+Issues = "https://github.com/satwiksps/steadlith/issues"
+Documentation = "https://github.com/satwiksps/steadlith/tree/main/docs"
+Changelog = "https://github.com/satwiksps/steadlith/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -71,7 +71,7 @@ include = [
   "/tests",
   "/docs",
   "/examples",
-  "/assets/cairn-banner.svg",
+  "/assets/steadlith-banner.svg",
   "/README.md",
   "/LICENSE",
   "/CONTRIBUTING.md",
@@ -83,7 +83,7 @@ include = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/cairn_rag"]
+packages = ["src/steadlith"]
 
 [tool.pytest.ini_options]
 minversion = "8.0"
@@ -99,13 +99,12 @@ markers = [
 target-version = "py310"
 line-length = 100
 src = ["src", "tests"]
-extend-exclude = ["cairn-project-spec.md"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["cairn_rag"]
+known-first-party = ["steadlith"]
 
 [tool.mypy]
 python_version = "3.10"

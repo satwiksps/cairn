@@ -2,11 +2,11 @@
 
 ## Status and intent
 
-This document defines Cairn's architectural boundaries. The implemented `0.x` surface is intentionally limited and names may change. The purity, identity, and deletion constraints below are design invariants rather than optional conventions.
+This document defines Steadlith's architectural boundaries. The implemented `0.x` surface is intentionally limited and names may change. The purity, identity, and deletion constraints below are design invariants rather than optional conventions.
 
 ## System shape
 
-Cairn separates deterministic decisions from effects:
+Steadlith separates deterministic decisions from effects:
 
 ```text
 source text
@@ -122,6 +122,6 @@ The bundled SQLite adapter stores exactly one logical index per database file. `
 
 ## Extension points
 
-New providers and vector backends are optional adapters. Importing `cairn_rag` must not import their SDKs or require network access. Provider/model identity must be explicit and stable; backend adapters must expose capabilities and pass conformance tests.
+New providers and vector backends are optional adapters. Importing `steadlith` must not import their SDKs or require network access. Provider/model identity must be explicit and stable; backend adapters must expose capabilities and pass conformance tests.
 
 Any alternative chunker used for benchmarking must be identified explicitly. Changes to the default CDC algorithm require locality, determinism, churn, and retrieval evidence plus a new identity version.

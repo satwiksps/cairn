@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Cairn uses content-defined chunking (CDC) so boundary decisions depend on nearby content instead of absolute offsets. The intended result is local change propagation: an edit should alter chunks near the edit without renumbering every downstream boundary.
+Steadlith uses content-defined chunking (CDC) so boundary decisions depend on nearby content instead of absolute offsets. The intended result is local change propagation: an edit should alter chunks near the edit without renumbering every downstream boundary.
 
 The current design uses a Rabin-style rolling fingerprint with two-threshold boundary selection. It does **not** use FastCDC: throughput is secondary to a locality property in an indexing pipeline where embedding is normally the expensive operation.
 
@@ -57,7 +57,7 @@ Implementations must handle the final short tail deterministically and must alwa
 
 ## 3. Optional bounded snapping
 
-Raw CDC candidates can land inside sentences. Cairn defines optional snapping to a paragraph or sentence boundary, but keeps it disabled by default.
+Raw CDC candidates can land inside sentences. Steadlith defines optional snapping to a paragraph or sentence boundary, but keeps it disabled by default.
 
 When enabled, snapping is a deterministic function of only the raw anchor and a bounded local window of `snap_window_words` on each side:
 
@@ -115,7 +115,7 @@ Serialization is canonical and length-delimited. At a minimum, chunker parameter
 
 The embedding model is intentionally absent. Embedding cache identity adds `embedding_model_id` and `embedding_parameters_hash` outside the chunk hash.
 
-`cairn-chunk-identity-v1` is the stable identity contract for the 0.2 release line. Golden-vector tests pin its canonical parameter hash and chunk hash. Any future incompatible normalization, boundary, token-accounting, or serialization change must use a new identity version and an explicit migration; see [compatibility](compatibility.md).
+The v1 wire identity remains the stable contract for existing 0.2 data and Steadlith 0.3. Golden-vector tests pin its canonical parameter hash and chunk hash. Any future incompatible normalization, boundary, token-accounting, or serialization change must use a new identity version and an explicit migration; see [compatibility](compatibility.md).
 
 ## 6. Diagnostics and acceptance criteria
 

@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from cairn_rag.content import CorpusManifest, DocumentManifest, chunk_content_hash
-from cairn_rag.errors import BackendError
-from cairn_rag.index.adapters import DocumentState, IndexRecord, SQLiteIndex
-from cairn_rag.models import ChunkRecord
+from steadlith.content import CorpusManifest, DocumentManifest, chunk_content_hash
+from steadlith.errors import BackendError
+from steadlith.index.adapters import DocumentState, IndexRecord, SQLiteIndex
+from steadlith.models import ChunkRecord
 
 
 def _record(instance: str, position: int, text: str, vector: tuple[float, ...]) -> IndexRecord:

@@ -27,12 +27,14 @@ export function ShieldIcon(props: IconProps) {
   );
 }
 
-export function CairnMark({ className }: { className?: string }) {
+export function SteadlithMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 28 28" fill="none" aria-hidden="true" className={className}>
-      <rect x="9" y="3" width="10" height="5" rx="2.5" fill="currentColor" opacity=".72" />
-      <rect x="6" y="10" width="16" height="6" rx="3" fill="currentColor" opacity=".86" />
-      <rect x="3" y="18" width="22" height="7" rx="3.5" fill="currentColor" />
+      <path
+        d="M5 4h18v5H10v3h13v12H5v-5h13v-3H5V4Z"
+        fill="currentColor"
+        fillRule="evenodd"
+      />
     </svg>
   );
 }

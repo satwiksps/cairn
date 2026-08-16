@@ -1,6 +1,6 @@
-# Contributing to Cairn
+# Contributing to Steadlith
 
-Thank you for improving Cairn. Contributions should be focused, testable, and explicit about compatibility effects.
+Thank you for improving Steadlith. Contributions should be focused, testable, and explicit about compatibility effects.
 
 ## Before opening a change
 
@@ -11,11 +11,11 @@ Thank you for improving Cairn. Contributions should be focused, testable, and ex
 
 ## Development setup
 
-Cairn supports Python 3.10 and newer.
+Steadlith supports Python 3.10 and newer.
 
 ```bash
-git clone https://github.com/satwiksps/cairn.git
-cd cairn
+git clone https://github.com/satwiksps/steadlith.git
+cd steadlith
 python -m venv .venv
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
@@ -33,7 +33,7 @@ npm run dev
 
 ## Making changes
 
-- Keep `cairn_rag.chunk` and `cairn_rag.content` deterministic and free of file, environment, and network access.
+- Keep `steadlith.chunk` and `steadlith.content` deterministic and free of file, environment, and network access.
 - Treat changes to normalization, tokenizer identity, chunk parameters, hash inputs, cache keys, manifests, or instance IDs as compatibility changes.
 - Preserve transactional visibility and stale-plan protection in index and migration code.
 - Add regression tests for bug fixes and deterministic tests for identity-affecting behavior.
@@ -47,8 +47,8 @@ Run these from the repository root before opening a pull request:
 ```bash
 python -m ruff check .
 python -m ruff format --check .
-python -m mypy src/cairn_rag
-python -m pytest --cov=cairn_rag --cov-branch --cov-report=term-missing
+python -m mypy src/steadlith
+python -m pytest --cov=steadlith --cov-branch --cov-report=term-missing
 python -m build
 ```
 

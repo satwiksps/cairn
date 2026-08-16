@@ -7,15 +7,15 @@ from typing import Any
 
 import pytest
 
-from cairn_rag.measure.churn import DEFAULT_STRATEGY_NAMES
-from cairn_rag.measure.corpora import (
+from steadlith.measure.churn import DEFAULT_STRATEGY_NAMES
+from steadlith.measure.corpora import (
     BenchmarkDocument,
     CorpusFixture,
     CorpusKind,
     GoldQuestion,
     get_corpus,
 )
-from cairn_rag.measure.retrieval import (
+from steadlith.measure.retrieval import (
     ScoringMethod,
     benchmark_retrieval,
     evaluate_retrieval,

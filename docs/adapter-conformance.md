@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This document defines behavior that every Cairn vector-index adapter must demonstrate. It is backend-neutral: method names may differ, but observable semantics may not.
+This document defines behavior that every Steadlith vector-index adapter must demonstrate. It is backend-neutral: method names may differ, but observable semantics may not.
 
 The key words **MUST**, **MUST NOT**, **SHOULD**, and **MAY** describe conformance requirements. No adapter is considered supported merely because it can insert vectors.
 
@@ -35,7 +35,7 @@ Each indexed occurrence MUST preserve:
 
 Occurrence identity MUST distinguish duplicate text at different positions. Content identity may deduplicate embedding computation, but it cannot collapse two retrievable occurrences into one record without explicit semantics.
 
-User metadata must be namespaced or validated so it cannot overwrite Cairn's reserved fields.
+User metadata must be namespaced or validated so it cannot overwrite Steadlith's reserved fields.
 
 ## Required behavior
 
@@ -77,7 +77,7 @@ Compaction physically removes only tombstones older than the requested cutoff/ro
 
 ### Errors and secrets
 
-Backend failures map to Cairn's typed adapter errors while preserving the original exception as a cause. Messages may contain safe record identifiers but MUST NOT expose credentials, source text, complete vectors, or connection-string secrets.
+Backend failures map to Steadlith's typed adapter errors while preserving the original exception as a cause. Messages may contain safe record identifiers but MUST NOT expose credentials, source text, complete vectors, or connection-string secrets.
 
 ## Shared conformance suite
 
