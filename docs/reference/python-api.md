@@ -61,6 +61,7 @@ Token counts influence boundaries and must have an explicit versioned identity:
 def count_for_model(word: str) -> int:
     return max(1, len(word.encode("utf-8")) // 4)
 
+
 params = CDCParams(tokenizer_id="example-byte-estimate-v1")
 chunker = CDCChunker(
     params,
