@@ -49,6 +49,8 @@ python -m ruff check .
 python -m ruff format --check .
 python -m mypy src/steadlith
 python -m pytest --cov=steadlith --cov-branch --cov-report=term-missing
+python -m pip install -r docs/requirements.txt
+python -m sphinx -W --keep-going -b dirhtml docs docs/_build/dirhtml
 python -m build
 ```
 

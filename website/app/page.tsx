@@ -8,7 +8,7 @@ import {
 } from "@/components/icons";
 import { SiteHeader } from "@/components/site-header";
 import { TerminalWindow } from "@/components/terminal-window";
-import { packageUrl, repositoryUrl } from "@/lib/site";
+import { documentationUrl, packageUrl, repositoryUrl } from "@/lib/site";
 
 const capabilities = [
   {
@@ -307,9 +307,14 @@ export default function Home() {
             connecting a paid provider.
           </p>
           <div className="final-actions">
-            <Link href="#quickstart" className="primary-button">
-              Read the quick start
-            </Link>
+            <a
+              href={documentationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="primary-button"
+            >
+              Read the documentation
+            </a>
             {repositoryUrl ? (
               <a
                 href={repositoryUrl}
@@ -348,6 +353,9 @@ export default function Home() {
             ) : null}
             <a href={packageUrl} target="_blank" rel="noopener noreferrer">
               PyPI
+            </a>
+            <a href={documentationUrl} target="_blank" rel="noopener noreferrer">
+              Docs
             </a>
             <span>Apache License 2.0</span>
           </div>

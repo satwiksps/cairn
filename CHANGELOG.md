@@ -6,6 +6,10 @@ All notable changes to Steadlith are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Added a structured Sphinx documentation site for Read the Docs with task guides, concepts, operations, JSON contracts, API reference, and warning-free CI builds.
+
 ## [0.3.0] - 2026-08-16
 
 ### Added

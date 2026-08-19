@@ -1,0 +1,77 @@
+:root {
+  --steadlith-border: color-mix(in srgb, currentColor 16%, transparent);
+}
+
+.sidebar-brand-text {
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.sidebar-logo {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.content {
+  line-height: 1.68;
+}
+
+.content h1,
+.content h2,
+.content h3 {
+  letter-spacing: -0.018em;
+}
+
+.content table.docutils {
+  display: table;
+  width: 100%;
+  font-size: 0.92rem;
+}
+
+.content table.docutils th {
+  white-space: nowrap;
+}
+
+.doc-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.doc-card {
+  border: 1px solid var(--steadlith-border);
+  border-radius: 0.55rem;
+  padding: 1rem 1.1rem;
+  background: var(--color-background-secondary);
+}
+
+.doc-card p {
+  margin: 0.35rem 0 0;
+}
+
+.doc-card strong {
+  font-size: 1rem;
+}
+
+.support-note {
+  border-left: 3px solid var(--color-brand-primary);
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0;
+  background: var(--color-background-secondary);
+}
+
+code.literal {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 720px) {
+  .doc-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .content table.docutils {
+    display: block;
+    overflow-x: auto;
+  }
+}

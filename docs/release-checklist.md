@@ -17,6 +17,7 @@ For the first Steadlith release:
 - After the new release is verified, remove the obsolete `CAIRN_RELEASE_ENABLED` variable and the old distribution's trusted publisher. Do not delete its published releases.
 - Activate the renamed repository in Codecov. Coverage upload is non-blocking until that account setup is complete.
 - Create the Steadlith Vercel project, set `NEXT_PUBLIC_SITE_URL` to its canonical URL, and verify `NEXT_PUBLIC_REPOSITORY_URL` if it is overridden.
+- Import `satwiksps/steadlith` at Read the Docs with project slug `steadlith`, keep `.readthedocs.yaml` as the configuration path, and verify the `latest` build at `steadlith.readthedocs.io`.
 
 ## Security and governance
 
@@ -39,4 +40,6 @@ For the first Steadlith release:
 4. Inspect the wheel: it must contain only the `steadlith` package and only the `steadlith` console entry point.
 5. Install that wheel into a clean environment and smoke-test `python -m steadlith`, `steadlith --version`, `plan`, `index`, `query --json`, `verify`, and adoption of a disposable 0.2 fixture.
 6. Run `npm ci`, `npm run lint`, `npm run typecheck`, and `npm run build` from `website/`.
-7. Tag exactly the version declared in `pyproject.toml`, publish a GitHub release, and enable trusted PyPI publishing only after the preceding checks pass.
+7. Run the Sphinx documentation build with warnings as errors and confirm the commit builds successfully on Read the Docs.
+8. Tag exactly the version declared in `pyproject.toml`, publish a GitHub release, and enable trusted PyPI publishing only after the preceding checks pass.
+9. Verify the tag appears as a documentation version and that `stable` resolves to the intended public release.

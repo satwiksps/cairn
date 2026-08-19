@@ -1,13 +1,14 @@
 import Link from "next/link";
 
 import { GitHubIcon, SteadlithMark } from "@/components/icons";
-import { repositoryUrl } from "@/lib/site";
+import { documentationUrl, repositoryUrl } from "@/lib/site";
 
 const navigation = [
   { label: "Why Steadlith", href: "#why" },
   { label: "Architecture", href: "#architecture" },
   { label: "Quick start", href: "#quickstart" },
   { label: "Limitations", href: "#limitations" },
+  { label: "Docs", href: documentationUrl },
 ] as const;
 
 export function SiteHeader() {

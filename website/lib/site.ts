@@ -39,6 +39,7 @@ export const repositoryUrl = readHttpsUrl(
 )?.toString();
 
 export const packageUrl = "https://pypi.org/project/steadlith/";
+export const documentationUrl = "https://steadlith.readthedocs.io/en/latest/";
 
 export const site = {
   name: "Steadlith",

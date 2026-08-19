@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Steadlith">
+  <rect width="64" height="64" rx="14" fill="#0b0e0c"/>
+  <path d="M13 10h38v11H24v6h27v27H13V43h27v-6H13V10Z" fill="#8ce8b3" fill-rule="evenodd"/>
+</svg>

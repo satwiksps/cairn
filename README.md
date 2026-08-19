@@ -5,6 +5,7 @@
 # Steadlith
 
 [![CI](https://github.com/satwiksps/steadlith/actions/workflows/ci.yml/badge.svg)](https://github.com/satwiksps/steadlith/actions/workflows/ci.yml)
+[![Documentation](https://readthedocs.org/projects/steadlith/badge/?version=latest)](https://steadlith.readthedocs.io/en/latest/)
 [![Codecov](https://codecov.io/gh/satwiksps/steadlith/graph/badge.svg)](https://codecov.io/gh/satwiksps/steadlith)
 [![PyPI](https://img.shields.io/pypi/v/steadlith?cacheSeconds=300)](https://pypi.org/project/steadlith/)
 [![Python](https://img.shields.io/pypi/pyversions/steadlith?cacheSeconds=300)](https://pypi.org/project/steadlith/)
@@ -93,7 +94,7 @@ With no explicit paths, `steadlith plan` and `index` use the committed `[sources
 
 The generated starter configuration uses deterministic unigram/bigram feature hashing. It works offline for exact-term and keyword retrieval but does not infer synonyms or semantic similarity. Use the OpenAI or sentence-transformers provider when semantic matching is required.
 
-See the [CLI reference](https://github.com/satwiksps/steadlith/blob/main/docs/cli.md) before automating a workflow; in particular, positional paths describe a complete desired corpus rather than additions to the existing index.
+See the [CLI reference](https://steadlith.readthedocs.io/en/latest/cli/) before automating a workflow; in particular, positional paths describe a complete desired corpus rather than additions to the existing index.
 
 Programmatic use keeps chunking separate from provider and backend concerns:
 
@@ -110,7 +111,7 @@ for chunk in chunks:
 
 `load_config` performs file I/O at the application edge; the chunker receives the parsed object and remains independent of files, providers, and backends.
 
-The documented top-level API and JSON outputs follow the [compatibility policy](https://github.com/satwiksps/steadlith/blob/main/docs/compatibility.md). Versioned chunk identities do not change silently across package releases.
+The documented top-level API and JSON outputs follow the [compatibility policy](https://steadlith.readthedocs.io/en/latest/compatibility/). Versioned chunk identities do not change silently across package releases.
 
 ## Configuration
 
@@ -139,16 +140,16 @@ Changing normalization or chunking parameters changes chunk identity. Always run
 
 ## Documentation
 
-- [CLI reference](https://github.com/satwiksps/steadlith/blob/main/docs/cli.md): commands, output modes, corpus scope, exit codes, and destructive operations.
-- [Backends and providers](https://github.com/satwiksps/steadlith/blob/main/docs/backends-and-providers.md): the implemented support matrix and production caveats.
-- [Architecture](https://github.com/satwiksps/steadlith/blob/main/docs/architecture.md): boundaries, identities, manifests, planning, and deletion.
-- [Chunking algorithm](https://github.com/satwiksps/steadlith/blob/main/docs/algorithm.md): implemented Rabin/TTTD behavior and locality acceptance targets.
-- [Benchmarks](https://github.com/satwiksps/steadlith/blob/main/docs/benchmarks.md): reproducible five-corpus churn and retrieval results.
-- [Compatibility](https://github.com/satwiksps/steadlith/blob/main/docs/compatibility.md): stable identities, public surfaces, and migration rules.
-- [Known limitations](https://github.com/satwiksps/steadlith/blob/main/docs/limitations.md): current correctness, quality, legal, and operational constraints.
-- [Adapter conformance](https://github.com/satwiksps/steadlith/blob/main/docs/adapter-conformance.md): requirements for additional index backends.
-- [Release checklist](https://github.com/satwiksps/steadlith/blob/main/docs/release-checklist.md): work required before public publishing.
-- [Landing website](https://github.com/satwiksps/steadlith/blob/main/website/README.md): local development and Vercel deployment instructions.
+The complete, versioned documentation is at [steadlith.readthedocs.io](https://steadlith.readthedocs.io/).
+
+- [Installation](https://steadlith.readthedocs.io/en/latest/getting-started/installation/): supported Python versions, PyPI, optional providers, source installs, and upgrades.
+- [Quick start](https://steadlith.readthedocs.io/en/latest/getting-started/quickstart/): complete offline indexing and query workflow.
+- [Configuration](https://steadlith.readthedocs.io/en/latest/getting-started/configuration/): every TOML field, default, constraint, and security boundary.
+- [Operations](https://steadlith.readthedocs.io/en/latest/guides/operations/): process model, backups, capacity, compaction, and upgrade procedure.
+- [CLI reference](https://steadlith.readthedocs.io/en/latest/cli/): commands, output modes, corpus scope, exit codes, and approvals.
+- [Python API](https://steadlith.readthedocs.io/en/latest/reference/python-api/): stable exports and advanced indexing integration.
+- [Architecture](https://steadlith.readthedocs.io/en/latest/architecture/): boundaries, identities, manifests, planning, and deletion.
+- [Benchmarks](https://steadlith.readthedocs.io/en/latest/benchmarks/): reproducible five-corpus churn and retrieval results.
 
 ## Upgrading from Cairn 0.2
 

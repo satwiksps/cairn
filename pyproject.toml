@@ -62,7 +62,7 @@ steadlith = "steadlith.cli:main"
 [project.urls]
 Repository = "https://github.com/satwiksps/steadlith"
 Issues = "https://github.com/satwiksps/steadlith/issues"
-Documentation = "https://github.com/satwiksps/steadlith/tree/main/docs"
+Documentation = "https://steadlith.readthedocs.io/"
 Changelog = "https://github.com/satwiksps/steadlith/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.sdist]
