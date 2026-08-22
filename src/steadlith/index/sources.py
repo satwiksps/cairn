@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import fnmatch
-import os
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -60,7 +59,7 @@ class SourceDocument:
     @property
     def metadata(self) -> dict[str, object]:
         return {
-            "path": str(self.path),
+            "path": self.document_id,
             "mtime_ns": self.mtime_ns,
             "size": self.size,
         }
@@ -186,28 +185,3 @@ def load_sources(paths: Iterable[Path], *, base_dir: Path) -> tuple[SourceDocume
         duplicates = sorted({document_id for document_id in ids if ids.count(document_id) > 1})
         raise SteadlithError(f"Duplicate source identifiers: {', '.join(duplicates)}")
     return documents
-
-
-def source_drift(source: SourceDocument, metadata: dict[str, object]) -> bool:
-    """Cheap drift check used by status; content is re-read only for planning."""
-
-    def stored_int(key: str) -> int:
-        value = metadata.get(key)
-        if isinstance(value, bool):
-            return -1
-        if isinstance(value, int):
-            return value
-        if isinstance(value, str):
-            try:
-                return int(value)
-            except ValueError:
-                return -1
-        return -1
-
-    path_value = metadata.get("path")
-    stored_path = os.fspath(path_value) if isinstance(path_value, (str, os.PathLike)) else ""
-    return bool(
-        stored_int("mtime_ns") != source.mtime_ns
-        or stored_int("size") != source.size
-        or stored_path != os.fspath(source.path)
-    )

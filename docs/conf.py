@@ -12,7 +12,7 @@ copyright = "2026, Steadlith contributors"
 try:
     release = version("steadlith")
 except PackageNotFoundError:
-    release = "0.3.0"
+    release = "1.0.0"
 version = ".".join(release.split(".")[:2])
 
 extensions = [

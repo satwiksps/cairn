@@ -46,11 +46,13 @@ Non-exhaustive starting points identified during project planning include U.S. P
 
 Tombstone safety depends on metadata filtering, transaction/isolation behavior, and query-path discipline. Adapters without reliable filtering can only offer degraded physical deletion. A process crash, concurrent writer, or backend consistency delay may require reconciliation before a manifest can be trusted.
 
-An adapter is unsupported until it passes the shared conformance suite against the backend versions it declares. Marketing support is not a substitute for those tests.
+No reusable cross-backend conformance suite exists. Only the SQLite behavior exercised by this repository's tests is supported.
 
 The bundled SQLite adapter uses one database file for one logical index. Collection namespaces, staged alias swaps, zero-downtime traffic switching, and timed rollback are not implemented; configuration keys that would imply those capabilities are rejected.
 
-The local migration workflow provides explicit preview/apply, durable config persistence, crash recovery, receipts, and a checked immediate rollback. Rollback is a new SQLite generation, not an alias swap: it requires the index/config to still match the latest receipt and the current sources to reproduce the old corpus root. If sources changed, restore their old revision first. If old cache entries were pruned, rollback can call the configured provider again. Compaction retains receipts but may remove the tombstoned vector evidence they describe.
+The local migration workflow provides explicit preview/apply, process-crash config recovery, receipts, and a checked immediate rollback. Rollback is a new SQLite generation, not an alias swap: it requires the index/config to still match the latest receipt and the current sources to reproduce the old corpus root. If sources changed, restore their old revision first. If old cache entries were pruned, rollback can call the configured provider again. Compaction retains receipts but may remove the tombstoned vector evidence they describe.
+
+Migration journal and receipt publication requires hard-link creation within a directory, and migrated configuration publication requires atomic replacement within its directory. Filesystems without those primitives are unsupported for migration apply and recovery. Parent directories are not explicitly fsynced, so sudden-power-loss durability of directory entries depends on the operating system and filesystem.
 
 ## Resume limits around paid providers
 

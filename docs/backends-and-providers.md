@@ -9,11 +9,11 @@ Install optional providers with `pip install "steadlith[openai]"` or `pip instal
 | Backend | Install | Current status | Important boundaries |
 | --- | --- | --- | --- |
 | SQLite | Core package | Supported local backend | One logical index per database file; local transactional snapshot apply, active-record filtering, tombstones, brute-force vector queries, verification, and compaction. No collection namespaces, alias swaps, remote service, replication, or high-availability claim. |
-| Other vector databases | N/A | Not implemented | The adapter contract exists, but no other backend is advertised as supported until it passes the shared conformance suite. |
+| Other vector databases | N/A | Not implemented | No reusable conformance harness or additional backend is present. |
 
 Use a distinct `[index].database` path for each logical index. `collection` and `alias` configuration keys are rejected rather than ignored. SQLite is useful for development, local evaluation, and the end-to-end reference path; capacity, concurrency, backup, and availability must be evaluated before any production use.
 
-See [adapter conformance](adapter-conformance.md) for the requirements any additional backend must meet.
+See [adapter status](adapter-conformance.md) for the behavior covered by the SQLite tests.
 
 ## Embedding-provider support
 

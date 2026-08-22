@@ -27,12 +27,23 @@ def test_cache_get_many_deduplicates_keys_and_returns_hits(tmp_path: Path) -> No
 
 
 def test_cache_get_many_batches_above_sqlite_parameter_limit(tmp_path: Path) -> None:
-    keys = [(f"chunk-{index}", "model", "params") for index in range(251)]
+    keys = [(f"chunk-{index}", "model", "params") for index in range(334)]
+    statements: list[str] = []
     with Cache(tmp_path / "cache.sqlite3") as cache:
         cache.put_many((*key, (float(index),), 1) for index, key in enumerate(keys))
+        connection = cache._connection
+        assert connection is not None
+        connection.set_trace_callback(statements.append)
         found = cache.get_many(keys)
+        connection.set_trace_callback(None)
+    selects = [
+        statement
+        for statement in statements
+        if "SELECT CHUNK_HASH" in statement.upper() and "FROM EMBEDDINGS WHERE" in statement.upper()
+    ]
+    assert len(selects) == 2
     assert len(found) == len(keys)
-    assert found[keys[-1]] == pytest.approx((250.0,))
+    assert found[keys[-1]] == pytest.approx((333.0,))
 
 
 def test_cache_export_import_round_trip(tmp_path: Path) -> None:
@@ -56,6 +67,35 @@ def test_cache_prune_rejects_negative_limits(tmp_path: Path, argument: dict[str,
     with Cache(tmp_path / "cache.sqlite3") as cache:
         with pytest.raises(ValueError, match="non-negative"):
             cache.prune(**argument)
+
+
+def test_cache_prune_removes_only_expired_and_oldest_entries(tmp_path: Path) -> None:
+    path = tmp_path / "cache.sqlite3"
+    keys = [("old", "model", "params"), ("middle", "model", "params"), ("new", "model", "params")]
+    with Cache(path) as cache:
+        cache.put_many((*key, (float(index),), 1) for index, key in enumerate(keys))
+
+    timestamps = {
+        "old": "2000-01-01T00:00:00+00:00",
+        "middle": "2099-01-01T00:00:00+00:00",
+        "new": "2100-01-01T00:00:00+00:00",
+    }
+    with sqlite3.connect(path) as connection:
+        connection.executemany(
+            "UPDATE embeddings SET accessed_at = ? WHERE chunk_hash = ?",
+            ((timestamp, chunk_hash) for chunk_hash, timestamp in timestamps.items()),
+        )
+
+    with Cache(path) as cache:
+        assert cache.prune(max_age_days=1) == 1
+        assert not cache.contains(*keys[0])
+        assert cache.contains(*keys[1])
+        assert cache.contains(*keys[2])
+
+        assert cache.prune(max_entries=1) == 1
+        assert not cache.contains(*keys[1])
+        assert cache.contains(*keys[2])
+        assert cache.stats().entries == 1
 
 
 def test_export_of_missing_readonly_cache_creates_parent(tmp_path: Path) -> None:

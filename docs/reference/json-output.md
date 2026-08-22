@@ -85,12 +85,10 @@ Fields are:
 
 ```text
 corpus_root, generation, documents, active_chunks, tombstoned_chunks,
-hard_cuts, total_boundaries, model_id, params_hash, hard_cut_rate,
-index_drift, source_drift, embedding_drift, pending_operations,
-pending_embeddings
+hard_cuts, total_boundaries, model_id, params_hash, hard_cut_rate
 ```
 
-`pending_operations` contains all four operation keys even when their values are zero.
+Status fields describe only committed index state. Run `plan --json` to compare current sources or embedding configuration with that state.
 
 ## Query
 

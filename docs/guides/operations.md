@@ -30,6 +30,8 @@ Build those concerns in the application or platform around Steadlith.
 
 Keep config and managed state on a local filesystem with reliable file locking and atomic replace semantics:
 
+Migration journals and receipts are published by hard-linking an fsynced temporary file in the target directory; migrated TOML uses same-directory atomic replacement. The config and receipt-directory filesystems must support those operations. Parent directories are not explicitly fsynced, so sudden-power-loss durability of directory entries depends on the operating system and filesystem.
+
 ```text
 project/
   steadlith.toml

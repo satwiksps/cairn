@@ -57,9 +57,9 @@ The serialized manifest stored inside SQLite is authoritative. After an index tr
 .steadlith/index.sqlite3.manifest.json
 ```
 
-The mirror is intended for inspection, backup checks, and diffs. It is excluded from source discovery so indexing cannot ingest its own changing output.
+The mirror is intended for inspection, backup checks, and diffs. It is excluded from source discovery so indexing cannot ingest its own changing output. `steadlith verify` compares it with the authoritative SQLite copy and reports a missing, unreadable, or different mirror as a verification failure.
 
-If mirror writing fails after commit, the CLI reports that the index committed. Run `verify` against SQLite before retrying.
+If mirror writing fails after commit, the CLI reports that the index committed. Verification then reports the mirror mismatch. Rerun `steadlith index` with the same configuration and source scope to repair the mirror without creating a new SQLite generation. After a migration failure, use the finalized configuration and its configured sources; do not repeat the migration command.
 
 ## Root and generation
 

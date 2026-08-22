@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from steadlith.config import load_config, write_default_config
+from steadlith.config import ChunkerConfig, EmbeddingConfig, load_config, write_default_config
 from steadlith.errors import ConfigError
 
 
@@ -20,6 +20,25 @@ def test_default_config_is_not_overwritten(tmp_path: Path) -> None:
     path = write_default_config(tmp_path / "steadlith.toml")
     with pytest.raises(ConfigError, match="Refusing to overwrite"):
         write_default_config(path)
+
+
+def test_unknown_chunking_strategy_lists_accepted_values() -> None:
+    with pytest.raises(ConfigError) as exc_info:
+        ChunkerConfig(strategy="typo").validate()
+
+    assert str(exc_info.value) == (
+        "Unknown chunking strategy: 'typo'. Accepted values: "
+        "cdc-rabin, cdc-rabin+snap, fixed, recursive, semantic"
+    )
+
+
+def test_unknown_embedding_provider_lists_accepted_values() -> None:
+    with pytest.raises(ConfigError) as exc_info:
+        EmbeddingConfig(provider="typo").validate()
+
+    assert str(exc_info.value) == (
+        "Unknown embedding provider: 'typo'. Accepted values: hash, openai, sentence-transformers"
+    )
 
 
 def test_unknown_config_key_is_rejected(tmp_path: Path) -> None:

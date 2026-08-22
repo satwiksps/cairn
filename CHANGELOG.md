@@ -6,9 +6,30 @@ All notable changes to Steadlith are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-22
+
+### Added
+
+- Added versioned Sphinx documentation for installation, configuration, operations, migrations, JSON output, and the public Python API.
+- Added a production website smoke check for key routes, metadata, headers, and assets.
+- Added regression coverage for CLI contracts, provider responses and retries, cache pruning, compaction boundaries, migration recovery, and installed entry points.
+
 ### Changed
 
-- Added a structured Sphinx documentation site for Read the Docs with task guides, concepts, operations, JSON contracts, API reference, and warning-free CI builds.
+- **Breaking:** `status` now reads committed index state without scanning source files. The JSON fields `index_drift`, `source_drift`, `embedding_drift`, `pending_operations`, and `pending_embeddings` were removed; use `plan --json` for source and configuration comparison.
+- `Chunk` now rejects non-string content and non-mapping metadata. `CDCParams` now rejects invalid numeric and boolean fields, unknown keys, and non-CDC strategies.
+- Source path metadata now uses project-relative document IDs instead of absolute paths. The first 1.0 plan over a 0.3 index can report metadata-only `move` operations; applying them does not re-embed unchanged chunks.
+- OpenAI requests use Steadlith's retry loop without additional SDK retries.
+- The README and website now provide a complete offline quick start and supported deployment and provider scope. The README also provides benchmark commands and support instructions.
+- Removed the unused `embed_with_cache(..., on_batch=...)` callback, duplicate vector serialization code, duplicate website artwork, and an unnecessary development dependency.
+
+### Fixed
+
+- State-path collisions now fail with typed errors that name the blocking path and the configuration key to change.
+- Configuration and benchmark choice errors now list the accepted values.
+- Manifest mirror verification and repair now detect mismatches and preserve a recoverable state after interrupted writes.
+- `compact --dry-run` no longer creates a missing index database.
+- Network-consent errors now report the active project configuration instead of assuming the default file.
 
 ## [0.3.0] - 2026-08-16
 
@@ -70,7 +91,8 @@ All notable changes to Steadlith are documented here. The format follows
 - The bundled hash embedder is deterministic test infrastructure, not a production retrieval model.
 - Post-anchor structural snapping is experimental and requires project-specific legal review before use.
 
-[Unreleased]: https://github.com/satwiksps/steadlith/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/satwiksps/steadlith/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/satwiksps/steadlith/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/satwiksps/steadlith/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/satwiksps/steadlith/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/satwiksps/steadlith/releases/tag/v0.1.0

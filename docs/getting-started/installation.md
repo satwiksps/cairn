@@ -1,6 +1,6 @@
 # Installation
 
-Steadlith supports CPython 3.10 through 3.14 on Windows, macOS, and Linux. The core package contains the CLI, chunking algorithms, local SQLite index, embedding cache, offline hash provider, migration workflow, and benchmark fixtures.
+The package declares CPython 3.10 or newer. CI is configured to exercise Linux on Python 3.10 through 3.14 and Windows and macOS on Python 3.12. The core package contains the CLI, chunking algorithms, local SQLite index, embedding cache, offline hash provider, migration workflow, and benchmark fixtures.
 
 ## Install from PyPI
 
@@ -68,6 +68,12 @@ Use an editable install when contributing:
 git clone https://github.com/satwiksps/steadlith.git
 cd steadlith
 python -m venv .venv
+```
+
+Activate the environment with the platform command shown above, then install:
+
+```bash
+python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
@@ -86,7 +92,25 @@ steadlith verify
 
 `plan` is read-only and reveals any identity or source-scope change before the index is modified.
 
+When upgrading from 0.3, the first plan can report metadata-only `move` operations because 1.0 stores project-relative document paths instead of absolute paths. These operations do not require new embeddings; review the plan, then apply it with `steadlith index` to commit the portable metadata.
+
 Users of Cairn 0.2 should follow [Adopt a 0.2 project](../guides/migrations.md#adopt-a-02-project) instead of renaming state files by hand.
+
+## Uninstall
+
+Remove an environment installation with:
+
+```bash
+python -m pip uninstall steadlith
+```
+
+For pipx:
+
+```bash
+pipx uninstall steadlith
+```
+
+Package removal does not delete project data. With the default configuration, `steadlith.toml`, `steadlith.toml.migration.json`, and `.steadlith/` can contain configuration, resolved paths, index data, cached embeddings, the manifest mirror, and migration records. If the migration journal exists, run `steadlith migrate --recover` before uninstalling or deleting data. Retain any required backup, then remove only the default files or the custom state paths and sidecars named by the configuration.
 
 ## Troubleshooting installation
 

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from bisect import bisect_right
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any, Protocol
 
@@ -13,6 +12,7 @@ from steadlith.chunk.stream import (
     NORMALIZER_VERSION,
     NormalizedStream,
     TokenCounter,
+    end_at_token_limit,
     normalize_stream,
     resolve_tokenizer_id,
 )
@@ -24,18 +24,6 @@ SimilarityFunction = Callable[[str, str], float]
 
 class Chunker(Protocol):
     def split(self, text: str, metadata: Mapping[str, Any] | None = None) -> list[Chunk]: ...
-
-
-def _end_at_token_limit(stream: NormalizedStream, start: int, limit: int) -> int:
-    word_tokens = stream[start].token_count
-    if word_tokens > limit:
-        raise ValueError(
-            f"word at index {start} has token count {word_tokens}, which exceeds max_tokens={limit}"
-        )
-    end = bisect_right(stream.token_prefix, stream.token_prefix[start] + limit, lo=start + 1) - 1
-    if end <= start:  # pragma: no cover - guarded by the oversized-word check above
-        raise AssertionError("token-limit search failed to make progress")
-    return min(len(stream), end)
 
 
 def _matches_recursive_separator(stream: NormalizedStream, position: int, separator: str) -> bool:
@@ -119,7 +107,7 @@ class FixedChunker:
         ranges: list[tuple[int, int]] = []
         start = 0
         while start < len(stream):
-            end = _end_at_token_limit(stream, start, self.chunk_size_tokens)
+            end = end_at_token_limit(stream, start, self.chunk_size_tokens)
             ranges.append((start, end))
             if end == len(stream):
                 break
@@ -177,7 +165,7 @@ class RecursiveChunker:
         ranges: list[tuple[int, int]] = []
         start = 0
         while start < len(stream):
-            maximum = _end_at_token_limit(stream, start, self.max_tokens)
+            maximum = end_at_token_limit(stream, start, self.max_tokens)
             if maximum == len(stream):
                 ranges.append((start, maximum))
                 break
@@ -277,13 +265,13 @@ class SemanticChunker:
                     # can jump past later entries in ``sentence_ends`` and the
                     # next iteration attempts an invalid reversed stream slice.
                     hard_end = min(
-                        _end_at_token_limit(stream, start, self.max_tokens),
+                        end_at_token_limit(stream, start, self.max_tokens),
                         previous_unit_start,
                     )
                     ranges.append((start, hard_end))
                     start = hard_end
                 if start == previous_unit_start and start < unit_end:
-                    maximum = _end_at_token_limit(stream, start, self.max_tokens)
+                    maximum = end_at_token_limit(stream, start, self.max_tokens)
                     if maximum < unit_end:
                         ranges.append((start, maximum))
                         start = maximum
@@ -298,7 +286,7 @@ class SemanticChunker:
                     start = previous_unit_start
             previous_unit_start = unit_end
         while start < len(stream):
-            end = _end_at_token_limit(stream, start, self.max_tokens)
+            end = end_at_token_limit(stream, start, self.max_tokens)
             ranges.append((start, end))
             start = end
         return _make_chunks(

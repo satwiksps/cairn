@@ -146,6 +146,9 @@ jobs:
       - name: Build website
         run: npm run build
 
+      - name: Smoke-test production website
+        run: npm run smoke
+
   publish-github:
     name: Create GitHub release
     needs: [build, website]

@@ -1,6 +1,6 @@
 # Verification and recovery
 
-Steadlith exposes separate checks for source drift, durable index consistency, migration interruption, and stale writes.
+Steadlith exposes separate checks for planned source changes, durable index consistency, migration interruption, and stale writes.
 
 ## Status
 
@@ -14,13 +14,9 @@ Status reports:
 - committed corpus root and generation;
 - document, active chunk, and tombstone counts;
 - committed model and parameters identities;
-- hard-cut count and rate;
-- source drift against stored filesystem metadata;
-- current pending plan counts for configured sources.
+- hard-cut count and rate.
 
-Source drift means the configured files no longer match the committed snapshot. It is not itself corruption. Run `plan`, review the delta, and apply when intended.
-
-Embedding drift means the current configuration identity differs from the committed index identity. Migrate before querying.
+Status does not read configured sources. Run `plan` to compare the current source and embedding configuration with the committed snapshot. A planned difference is not itself corruption; review the delta and apply or migrate when intended.
 
 ## Verify
 
@@ -28,9 +24,9 @@ Embedding drift means the current configuration identity differs from the commit
 steadlith verify
 ```
 
-Verification checks the authoritative SQLite manifest and active records, including roots, ordered occurrence identities, model and parameter identity, offsets, token counts, metadata, stored text, vector shape, finite values, and record digests.
+Verification checks the authoritative SQLite manifest and active records, including roots, ordered occurrence identities, model and parameter identity, offsets, token counts, metadata, stored text, vector shape, finite values, and record digests. It also compares the derived JSON manifest mirror with the authoritative SQLite copy.
 
-Exit code 2 indicates a mismatch. Stop writes, retain all state files, and capture `verify --json` output before attempting restoration.
+Exit code 2 indicates a mismatch. If the error names the mirror, retain SQLite, repeat the same index operation with the same approvals, and verify again. For a SQLite manifest or record mismatch, stop writes, retain all state files, and capture `verify --json` output before attempting restoration.
 
 Verification confirms internal consistency. It does not prove that source content is correct, that embeddings are semantically good, or that a cache import was authentic.
 
@@ -60,16 +56,17 @@ Then retry after correcting the provider or storage failure.
 
 ## Failure after index commit
 
-The SQLite index is authoritative. The human-readable manifest mirror is written after commit. If mirror writing fails, the command reports that the index committed and asks for verification.
+The SQLite index is authoritative. The human-readable manifest mirror is written after commit. If mirror writing fails, the command reports that the index committed and names the repair command.
 
 Run:
 
 ```bash
-steadlith verify
 steadlith status
+steadlith index
+steadlith verify
 ```
 
-A later successful apply refreshes the mirror. Do not treat a stale mirror as permission to replace the database.
+Pass the same `--config` value and positional source scope used by the failed `index` command. After a migration failure, use the finalized configuration and its configured sources; do not repeat the migration command. The no-op index run recognizes the already-committed SQLite state and refreshes the mirror without creating another generation. Verification fails while the mirror is missing, unreadable, or stale. Do not treat a stale mirror as permission to replace the database.
 
 ## Pending migration journal
 

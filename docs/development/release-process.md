@@ -16,7 +16,7 @@ Steadlith releases are built from an exact `v<version>` tag by the GitHub Action
 ## Publish
 
 1. Enable the repository release variable only for the intended publication window.
-2. Create and push the exact tag, for example `v0.3.1` for package version `0.3.1`.
+2. Create and push the exact tag, for example `v1.0.1` for package version `1.0.1`.
 3. Wait for artifact validation and provenance attestation.
 4. Confirm GitHub release assets and PyPI files match the workflow artifacts.
 5. Install from PyPI in a clean environment.

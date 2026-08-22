@@ -4,7 +4,7 @@ Steadlith is an incremental indexing toolkit for retrieval-augmented generation 
 
 ```{raw} html
 <div class="doc-card-grid">
-  <div class="doc-card"><strong><a href="getting-started/quickstart/">Start in five minutes</a></strong><p>Install Steadlith, index a local corpus, query it, and verify the result.</p></div>
+  <div class="doc-card"><strong><a href="getting-started/quickstart/">Follow the quick start</a></strong><p>Install Steadlith, index a local corpus, query it, and verify the result.</p></div>
   <div class="doc-card"><strong><a href="getting-started/configuration/">Configure a project</a></strong><p>Choose source globs, chunking, embeddings, cache paths, and index paths.</p></div>
   <div class="doc-card"><strong><a href="guides/indexing/">Operate an index safely</a></strong><p>Plan changes, approve deletions, inspect drift, recover migrations, and compact tombstones.</p></div>
   <div class="doc-card"><strong><a href="reference/python-api/">Use the Python API</a></strong><p>Integrate the stable chunker, parameter, chunk, and cache interfaces.</p></div>

@@ -6,6 +6,12 @@
 git clone https://github.com/satwiksps/steadlith.git
 cd steadlith
 python -m venv .venv
+```
+
+Activate the environment with `source .venv/bin/activate` on Linux or macOS, or
+`.venv\Scripts\Activate.ps1` in Windows PowerShell. Then install:
+
+```bash
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```

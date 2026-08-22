@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from bisect import bisect_right
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
 from typing import Literal, overload
@@ -19,6 +20,18 @@ TokenCounter = Callable[[str], int]
 _WORD_RE = re.compile(r"\S+", re.UNICODE)
 _PARAGRAPH_RE = re.compile(r"\n[\t\f\v ]*\n")
 _SENTENCE_END_RE = re.compile(r"[.!?](?:[\"'\)\]\}]+)?$")
+
+
+def end_at_token_limit(stream: NormalizedStream, start: int, limit: int) -> int:
+    word_tokens = stream[start].token_count
+    if word_tokens > limit:
+        raise ValueError(
+            f"word at index {start} has token count {word_tokens}, which exceeds max_tokens={limit}"
+        )
+    end = bisect_right(stream.token_prefix, stream.token_prefix[start] + limit, lo=start + 1) - 1
+    if end <= start:  # pragma: no cover - guarded by the oversized-word check above
+        raise AssertionError("token-limit search failed to make progress")
+    return min(len(stream), end)
 
 
 def default_token_count(word: str) -> int:

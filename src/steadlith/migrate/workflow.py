@@ -107,10 +107,6 @@ def _patched_config(text: str, overrides: Mapping[str, ConfigValue]) -> str:
     return result
 
 
-def _load_config_text(config_path: Path, text: str) -> SteadlithConfig:
-    return loads_config(text, base_dir=config_path.parent, config_path=config_path)
-
-
 def _config_changes(
     before: SteadlithConfig, after: SteadlithConfig
 ) -> dict[str, dict[str, object]]:
@@ -246,7 +242,7 @@ def prepare_migration(
     current = load_config(destination)
     before_text = _read_config_text(destination)
     after_text = _patched_config(before_text, overrides)
-    desired = _load_config_text(destination, after_text)
+    desired = loads_config(after_text, base_dir=destination.parent, config_path=destination)
     return _make_prepared(
         config_path=destination,
         current=current,
@@ -332,7 +328,7 @@ def prepare_rollback(
         raise ConfigError("Migration receipt does not contain a rollback configuration")
     if _sha256(after_value.encode("utf-8")) != receipt.get("before_sha256"):
         raise ConfigError("Migration receipt rollback configuration failed its checksum")
-    desired = _load_config_text(destination, after_value)
+    desired = loads_config(after_value, base_dir=destination.parent, config_path=destination)
     prepared = _make_prepared(
         config_path=destination,
         current=current,

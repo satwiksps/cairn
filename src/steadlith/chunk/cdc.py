@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-from bisect import bisect_right
 from collections.abc import Mapping, Sequence
 from dataclasses import replace
 from functools import partial
@@ -16,6 +15,7 @@ from steadlith.chunk.stream import (
     DEFAULT_TOKENIZER_ID,
     NormalizedStream,
     TokenCounter,
+    end_at_token_limit,
     normalize_stream,
     resolve_tokenizer_id,
 )
@@ -79,20 +79,6 @@ def rolling_fingerprints(stream: NormalizedStream, window_words: int) -> tuple[i
     return tuple(values)
 
 
-def _max_end(stream: NormalizedStream, start: int, max_tokens: int) -> int:
-    word_tokens = stream[start].token_count
-    if word_tokens > max_tokens:
-        raise ValueError(
-            f"word at index {start} has token count {word_tokens}, "
-            f"which exceeds max_tokens={max_tokens}"
-        )
-    target = stream.token_prefix[start] + max_tokens
-    end = bisect_right(stream.token_prefix, target, lo=start + 1) - 1
-    if end <= start:  # pragma: no cover - guarded by the oversized-word check above
-        raise AssertionError("token-limit search failed to make progress")
-    return min(end, len(stream))
-
-
 def _resolve_settings(
     params: CDCParams | None,
     token_counter: TokenCounter | None,
@@ -133,10 +119,12 @@ def chunk_stream(
     chunks: list[Chunk] = []
     primary_count = backup_count = hard_count = snapped_count = 0
     start = 0
-    base_metadata = dict(metadata or {})
+    if metadata is not None and not isinstance(metadata, Mapping):
+        raise TypeError("metadata must be a mapping")
+    base_metadata = dict(metadata) if metadata is not None else {}
 
     while start < len(stream):
-        maximum_end = _max_end(stream, start, settings.max_tokens)
+        maximum_end = end_at_token_limit(stream, start, settings.max_tokens)
         backup: int | None = None
         primary: int | None = None
         for position in range(start + 1, maximum_end + 1):

@@ -16,13 +16,8 @@ The command writes `steadlith.toml`. The generated configuration includes Markdo
 
 Create `docs/notes.md`:
 
-```markdown
-# Release notes
-
-Steadlith assigns content-defined identities to chunks.
-Unchanged chunk identities can reuse cached embeddings.
-
-The index command publishes one SQLite snapshot after embedding succeeds.
+```bash
+python -c "from pathlib import Path; Path('docs').mkdir(exist_ok=True); Path('docs/notes.md').write_text('# Release notes\n\nSteadlith assigns content-defined identities to chunks.\nUnchanged chunk identities can reuse cached embeddings.\n\nThe index command publishes one SQLite snapshot after embedding succeeds.\n', encoding='utf-8')"
 ```
 
 ## 2. Preview the index
@@ -31,7 +26,7 @@ The index command publishes one SQLite snapshot after embedding succeeds.
 steadlith plan
 ```
 
-The plan reports the target corpus root, operation counts, cache hits, required embeddings, token estimate, and configured cost estimate. It does not write the cache or index and does not construct an embedding provider.
+The plan reports one added chunk and one required embedding, plus the target corpus root, cache hits, token estimate, and configured cost estimate. It does not write the cache or index and does not construct an embedding provider.
 
 For automation:
 
@@ -53,7 +48,7 @@ Run the same command again:
 steadlith index
 ```
 
-The second plan should contain only `keep` operations and require no new embeddings.
+The second index run should contain only `keep` operations and require no new embeddings.
 
 ## 4. Query active content
 
@@ -61,7 +56,7 @@ The second plan should contain only `keep` operations and require no new embeddi
 steadlith query "cached embeddings"
 ```
 
-The result includes a cosine score, source document, offsets, and chunk text. The default hash provider works for matching words and short phrases. It does not infer that two different words have the same meaning.
+The first result names `docs/notes.md` and includes a cosine score, offsets, and chunk text. The default hash provider works for matching words and short phrases. It does not infer that two different words have the same meaning.
 
 To consume results in a program:
 
@@ -76,7 +71,7 @@ steadlith status
 steadlith verify
 ```
 
-`status` shows the committed generation, corpus root, chunk counts, embedding identity, drift, and pending operations. `verify` independently checks the stored manifest and active index records.
+`status` shows the committed corpus root, chunk counts, and embedding identity without reading configured sources; `status --json` also includes the generation and embedding-parameters hash. Run `plan` to compare current sources or embedding configuration with that committed state. `verify` checks the authoritative SQLite manifest and active index records, then compares the derived JSON manifest mirror with that SQLite state.
 
 ## 6. Make a small edit
 

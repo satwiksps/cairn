@@ -34,7 +34,7 @@ class OpenAIEmbeddingProvider:
         self._dimensions = dimensions
         self._transient_error_types = (APIConnectionError, APITimeoutError)
         try:
-            self._client: Any = OpenAI(api_key=api_key, base_url=base_url)
+            self._client: Any = OpenAI(api_key=api_key, base_url=base_url, max_retries=0)
         except Exception as exc:
             raise ProviderError(f"Could not initialize the OpenAI client: {exc}") from exc
         payload = json.dumps(

@@ -39,7 +39,7 @@ Regression tests
 : Preserve exact failures found during review, including Unicode output, source-state exclusion, duplicate occurrence handling, migration restore, and locality counterexamples.
 
 Determinism tests
-: Pin parameter hashes, chunk hashes, stream behavior, and serialized state across supported Python platforms.
+: Pin parameter hashes, chunk hashes, stream behavior, and serialized state across the CI matrix.
 
 Integration-style tests
 : Exercise complete local workflows with real SQLite state while keeping external providers out of default CI.

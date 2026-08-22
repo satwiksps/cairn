@@ -4,8 +4,10 @@ import json
 
 import pytest
 
+from steadlith import Chunk
 from steadlith.chunk import CDCChunker, CDCParams
 from steadlith.content import (
+    EMPTY_MERKLE_ROOT,
     IDENTITY_SCHEMA_VERSION,
     CorpusManifest,
     DocumentManifest,
@@ -22,9 +24,6 @@ def test_chunk_hash_commits_to_chunking_but_not_embedding_model() -> None:
         "chunker_params_hash": "params",
         "normalizer_version": "normalizer-v1",
     }
-    model_a = "embedding-a"
-    model_b = "embedding-b"
-    assert model_a != model_b
     first = chunk_content_hash("same content", **fields)
     second = chunk_content_hash("same content", **fields)
     assert first == second
@@ -61,6 +60,18 @@ def test_unknown_chunk_identity_schema_is_rejected() -> None:
         )
 
 
+@pytest.mark.parametrize(
+    "values",
+    [
+        (123, {}),
+        ("valid text", []),
+    ],
+)
+def test_chunk_rejects_invalid_public_field_types(values: tuple[object, object]) -> None:
+    with pytest.raises(TypeError):
+        Chunk(*values)  # type: ignore[arg-type]
+
+
 def test_merkle_roots_are_deterministic_order_sensitive_and_diffable() -> None:
     first = MerkleTree.from_leaves(["a", "b", "c", "d"])
     same = MerkleTree.from_leaves(["a", "b", "c", "d"])
@@ -71,7 +82,11 @@ def test_merkle_roots_are_deterministic_order_sensitive_and_diffable() -> None:
     assert first.root != changed.root
     assert first.root != reordered.root
     assert first.diff_indices(changed) == (2,)
-    assert MerkleTree.from_leaves([]).root == MerkleTree.from_leaves([]).root
+    empty = MerkleTree.from_leaves([])
+    assert EMPTY_MERKLE_ROOT == "c0975005831371eb614b1449995aada0f39b6c917df5f7577caf662b840d322d"
+    assert empty.root == EMPTY_MERKLE_ROOT
+    assert empty.leaves == ()
+    assert empty.levels == ((EMPTY_MERKLE_ROOT,),)
 
 
 def test_corpus_root_commits_to_document_ids_and_has_sorted_order() -> None:

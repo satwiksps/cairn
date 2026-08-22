@@ -86,6 +86,58 @@ def test_snapshot_delete_is_immediately_unreachable_then_compactable(tmp_path: P
         assert index.status().tombstoned_chunks == 0
 
 
+def test_compaction_cutoff_removes_rows_at_or_before_the_boundary(tmp_path: Path) -> None:
+    path = tmp_path / "index.sqlite3"
+    records = (
+        _record("before", 0, "before cutoff", (1.0, 0.0)),
+        _record("at", 1, "at cutoff", (0.0, 1.0)),
+        _record("after", 2, "after cutoff", (1.0, 1.0)),
+    )
+    with SQLiteIndex(path) as index:
+        index.apply_snapshot(
+            records=records,
+            documents=(_document(3),),
+            manifest_payload={"root_hash": "corpus-1"},
+            corpus_root="corpus-1",
+            model_id="hash:test",
+            params_hash="params",
+            vector_dimensions=2,
+            expected_generation=0,
+        )
+        index.apply_snapshot(
+            records=(),
+            documents=(),
+            manifest_payload={"root_hash": "corpus-2"},
+            corpus_root="corpus-2",
+            model_id="hash:test",
+            params_hash="params",
+            vector_dimensions=2,
+            expected_generation=1,
+        )
+
+    cutoff = "2025-01-01T00:00:00.000000+00:00"
+    with sqlite3.connect(path) as connection:
+        connection.executemany(
+            "UPDATE chunks SET valid_to = ? WHERE instance_id = ?",
+            (
+                ("2024-12-31T23:59:59.999999+00:00", "before"),
+                (cutoff, "at"),
+                ("2025-01-01T00:00:00.000001+00:00", "after"),
+            ),
+        )
+        connection.commit()
+
+    with SQLiteIndex(path) as index:
+        assert index.compact(before=cutoff, dry_run=True) == 2
+        assert index.status().tombstoned_chunks == 3
+        assert index.compact(before=cutoff) == 2
+        assert index.status().tombstoned_chunks == 1
+
+    with sqlite3.connect(path) as connection:
+        remaining = connection.execute("SELECT instance_id FROM chunks").fetchall()
+    assert remaining == [("after",)]
+
+
 def test_index_verify_detects_consistent_snapshot(tmp_path: Path) -> None:
     chunk_hash = chunk_content_hash(
         "hello",

@@ -72,7 +72,7 @@ Applications should still serialize writers. Stale rejection protects correctnes
 
 ## No-op behavior
 
-When the plan requires no apply, `apply_prepared` returns current counts without incrementing generation. Routine repeated indexing of an unchanged corpus is therefore stable.
+When no SQLite apply is required, `apply_prepared` rewrites the mirror from the authoritative manifest and returns current counts without incrementing generation. Routine repeated indexing of an unchanged corpus is therefore stable, and a no-op retry repairs a failed mirror publication.
 
 ## Public and advanced surfaces
 

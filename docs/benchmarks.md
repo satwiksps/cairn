@@ -1,6 +1,6 @@
 # Reproducible benchmark results
 
-These tables are the regression baseline carried into Steadlith 0.3.0. They were generated on 2026-08-16 from the five versioned corpora and eight gold questions bundled with the package.
+These tables are the regression baseline for Steadlith 1.0.0. They were generated on 2026-08-16 from the five versioned corpora and eight gold questions bundled with the package.
 
 The corpora represent a technical manual, documentation site, legal agreement, small code repository, and wiki. Churn applies nine deterministic edits to each corpus: sentence, paragraph, and section insertion; sentence and paragraph deletion; same-length replacement; section reorder; append; and global replacement.
 

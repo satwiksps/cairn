@@ -180,6 +180,15 @@ def test_query_rejects_missing_empty_or_invalid_input(tmp_path: Path) -> None:
         query_index(config, "hello", limit=0)
 
 
+def test_compact_dry_run_does_not_create_an_unbuilt_index(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    database = config.resolve(config.index.database)
+
+    assert not database.exists()
+    assert compact_index(config, dry_run=True) == 0
+    assert not database.exists()
+
+
 def test_service_validates_programmatic_configuration(tmp_path: Path) -> None:
     invalid = SteadlithConfig(
         store=StoreConfig(cache=".steadlith/shared.sqlite3"),
@@ -213,4 +222,39 @@ def test_stale_same_root_model_migration_cannot_overwrite_newer_state(
     assert status.model_id == "hash:test-hash-v2"
     assert status.generation == model_two.expected_generation + 1
     assert status.tombstoned_chunks == status.active_chunks
+    assert verify_index(config) == (True, ())
+
+
+def test_manifest_failure_is_detected_and_noop_retry_repairs_it(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config = _config(tmp_path)
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    source = docs / "guide.md"
+    source.write_text(" ".join(f"word-{i}" for i in range(80)), encoding="utf-8")
+    apply_prepared(prepare_index(config))
+
+    source.write_text(" ".join(f"changed-{i}" for i in range(80)), encoding="utf-8")
+    update = prepare_index(config)
+    from steadlith.index import service
+
+    write_snapshot = service._write_manifest_snapshot
+
+    def fail_snapshot(*args: object, **kwargs: object) -> None:
+        raise BackendError("simulated mirror publication failure")
+
+    monkeypatch.setattr(service, "_write_manifest_snapshot", fail_snapshot)
+    with pytest.raises(BackendError, match="simulated mirror publication failure"):
+        apply_prepared(update)
+    assert index_status(config).generation == update.expected_generation + 1
+
+    monkeypatch.setattr(service, "_write_manifest_snapshot", write_snapshot)
+    valid, issues = verify_index(config)
+    assert not valid
+    assert any("manifest mirror" in issue.lower() for issue in issues)
+
+    retry = prepare_index(config)
+    assert not retry.plan.requires_apply
+    apply_prepared(retry)
     assert verify_index(config) == (True, ())

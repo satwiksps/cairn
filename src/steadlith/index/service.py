@@ -33,7 +33,7 @@ from steadlith.index.adapters import (
 from steadlith.index.apply import resolve_identities
 from steadlith.index.plan import IndexPlan, create_plan
 from steadlith.index.sources import SourceDocument, discover_sources, load_sources
-from steadlith.models import Chunk
+from steadlith.models import Chunk, is_hard_cut
 from steadlith.store import Cache
 
 
@@ -116,13 +116,7 @@ def create_chunker(config: SteadlithConfig) -> Chunker:
 
 
 def _hard_cut_count(chunks: Sequence[Chunk]) -> int:
-    return sum(
-        1
-        for chunk in chunks
-        if bool(chunk.metadata.get("hard_cut"))
-        or chunk.metadata.get("boundary_reason") in {"hard-cut", "hard_max", "max"}
-        or chunk.metadata.get("boundary_kind") == "hard"
-    )
+    return sum(is_hard_cut(chunk.metadata) for chunk in chunks)
 
 
 def _protected_state(config: SteadlithConfig) -> tuple[set[Path], set[Path]]:
@@ -266,10 +260,6 @@ def prepare_index(
     )
 
 
-def _manifest_payload(manifest: CorpusManifest) -> Mapping[str, Any]:
-    return manifest.to_dict()
-
-
 def _write_manifest_snapshot(config: SteadlithConfig, payload: Mapping[str, Any]) -> None:
     """Mirror the authoritative SQLite manifest as diffable JSON after commit."""
 
@@ -290,7 +280,8 @@ def _write_manifest_snapshot(config: SteadlithConfig, payload: Mapping[str, Any]
     except (OSError, TypeError, ValueError) as exc:
         raise BackendError(
             "The index committed, but its diffable manifest mirror could not be written: "
-            f"{exc}. Run 'steadlith verify' before retrying."
+            f"{exc}. Rerun 'steadlith index' with the same configuration and source scope to "
+            "repair the mirror."
         ) from exc
     finally:
         if temporary is not None and os.path.exists(temporary):
@@ -314,6 +305,7 @@ def apply_prepared(prepared: PreparedIndex) -> ApplyResult:
                 "Index state changed after this plan was prepared; prepare a fresh plan and retry"
             )
         if not prepared.plan.requires_apply:
+            _write_manifest_snapshot(config, prepared.target_manifest.to_dict())
             return ApplyResult(
                 plan=prepared.plan,
                 active_chunks=status.active_chunks,
@@ -408,7 +400,7 @@ def apply_prepared(prepared: PreparedIndex) -> ApplyResult:
                         vector=vectors[chunk.chunk_hash],
                     )
                 )
-        payload = _manifest_payload(prepared.target_manifest)
+        payload = prepared.target_manifest.to_dict()
         active, tombstoned_now = index.apply_snapshot(
             records=records,
             documents=document_states,
@@ -485,11 +477,33 @@ def compact_index(
     config: SteadlithConfig, *, before: str | None = None, dry_run: bool = False
 ) -> int:
     config.validate()
-    with SQLiteIndex(config.resolve(config.index.database)) as index:
+    database = config.resolve(config.index.database)
+    if dry_run and not database.exists():
+        with SQLiteIndex(database, readonly=True):
+            pass
+        return 0
+    with SQLiteIndex(database) as index:
         return index.compact(before=before, dry_run=dry_run)
 
 
 def verify_index(config: SteadlithConfig) -> tuple[bool, tuple[str, ...]]:
     config.validate()
-    with SQLiteIndex(config.resolve(config.index.database), readonly=True) as index:
-        return index.verify()
+    database = config.resolve(config.index.database)
+    with SQLiteIndex(database, readonly=True) as index:
+        _, problems = index.verify()
+        payload = index.get_manifest_payload()
+    if payload is None:
+        return not problems, problems
+
+    mirror_path = database.with_name(f"{database.name}.manifest.json")
+    mirror_problems = list(problems)
+    try:
+        mirror = json.loads(mirror_path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        mirror_problems.append(f"manifest mirror is missing: {mirror_path}")
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        mirror_problems.append(f"manifest mirror is unreadable: {exc}")
+    else:
+        if mirror != payload:
+            mirror_problems.append("manifest mirror differs from the authoritative SQLite manifest")
+    return not mirror_problems, tuple(mirror_problems)

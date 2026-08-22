@@ -32,6 +32,18 @@ class CDCParams:
     boundary_rule_version: str = BOUNDARY_RULE_VERSION
 
     def __post_init__(self) -> None:
+        for name in (
+            "window_words",
+            "min_tokens",
+            "max_tokens",
+            "primary_mask_bits",
+            "backup_mask_bits",
+            "snap_window_words",
+        ):
+            if type(getattr(self, name)) is not int:
+                raise TypeError(f"{name} must be an integer")
+        if type(self.snap_to_boundaries) is not bool:
+            raise TypeError("snap_to_boundaries must be a boolean")
         if self.window_words < 1:
             raise ValueError("window_words must be positive")
         if self.min_tokens < 1:
@@ -87,10 +99,15 @@ class CDCParams:
             "rolling_hash_id",
             "boundary_rule_version",
         }
+        unknown = sorted(set(value) - fields - {"strategy"})
+        if unknown:
+            raise TypeError(f"unknown CDC params: {', '.join(unknown)}")
         values = {key: item for key, item in value.items() if key in fields}
         strategy = value.get("strategy")
+        if strategy is not None and strategy not in {"cdc-rabin", "cdc-rabin+snap"}:
+            raise ValueError(f"CDCParams cannot use chunker strategy {strategy!r}")
         if strategy is not None:
-            values["snap_to_boundaries"] = str(strategy) == "cdc-rabin+snap"
+            values["snap_to_boundaries"] = strategy == "cdc-rabin+snap"
         return cls(**values)
 
     @classmethod
@@ -121,6 +138,8 @@ class CDCParams:
         if not values and not hasattr(chunker, "strategy"):
             raise TypeError("config must expose chunker settings or be a mapping")
         strategy = getattr(chunker, "strategy", "cdc-rabin")
+        if strategy not in {"cdc-rabin", "cdc-rabin+snap"}:
+            raise ValueError(f"CDCParams cannot use chunker strategy {strategy!r}")
         values["snap_to_boundaries"] = strategy == "cdc-rabin+snap"
         return cls(**values)
 

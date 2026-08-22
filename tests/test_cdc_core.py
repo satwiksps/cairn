@@ -76,6 +76,11 @@ def test_cdc_is_deterministic_and_returns_document_compatible_chunks() -> None:
     assert all(chunk.token_count <= params.max_tokens for chunk in first)
 
 
+def test_cdc_rejects_non_mapping_metadata_even_when_empty() -> None:
+    with pytest.raises(TypeError, match="metadata"):
+        CDCChunker().split("alpha beta", [])  # type: ignore[arg-type]
+
+
 def test_cdc_identity_has_a_cross_platform_golden_vector() -> None:
     params = CDCParams(
         window_words=4,
@@ -274,6 +279,30 @@ def test_from_config_rejects_a_path_in_the_pure_chunking_layer() -> None:
         CDCChunker.from_config("steadlith.toml")
 
 
+@pytest.mark.parametrize("strategy", ["fixed", "recursive", "semantic"])
+def test_cdc_chunker_from_config_rejects_non_cdc_strategies(strategy: str) -> None:
+    with pytest.raises(ValueError, match=strategy):
+        CDCChunker.from_config({"strategy": strategy})
+
+
+@pytest.mark.parametrize(
+    ("values", "field"),
+    [
+        ({"window_words": True}, "window_words"),
+        ({"min_tokens": 1.5}, "min_tokens"),
+        ({"snap_to_boundaries": "yes"}, "snap_to_boundaries"),
+    ],
+)
+def test_cdc_params_reject_wrong_runtime_types(values: dict[str, object], field: str) -> None:
+    with pytest.raises(TypeError, match=field):
+        CDCParams(**values)  # type: ignore[arg-type]
+
+
+def test_cdc_params_mapping_rejects_unknown_keys() -> None:
+    with pytest.raises(TypeError, match="min_toknes"):
+        CDCParams.from_mapping({"min_toknes": 1})
+
+
 def _locality_case(
     operation: str, seed: int
 ) -> tuple[list[str], list[str], list[tuple[int, int, int]]]:
@@ -416,10 +445,3 @@ def test_tttd_fixed_margin_locality_counterexample_is_documented() -> None:
     assert [chunk.chunk_hash for chunk in original_interior] != [
         chunk.chunk_hash for chunk in edited_interior
     ]
-
-
-def test_fixed_strategy_demonstrates_offset_boundary_drift() -> None:
-    chunker = FixedChunker(chunk_size_tokens=10)
-    original = chunker.split(_document(50))
-    edited = chunker.split("inserted " + _document(50))
-    assert original[1].chunk_hash != edited[1].chunk_hash

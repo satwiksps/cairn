@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "steadlith"
-version = "0.3.0"
+version = "1.0.0"
 description = "Steadlith reuses unchanged RAG chunks with content-defined identities, cache-aware planning, and transactional indexing."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -21,7 +21,7 @@ keywords = [
   "content-defined-chunking",
 ]
 classifiers = [
-  "Development Status :: 4 - Beta",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent",
@@ -48,7 +48,6 @@ sentence-transformers = [
   "sentence-transformers>=3.0",
 ]
 dev = [
-  "tomli>=2.0.1",
   "build>=1.2",
   "mypy>=1.10",
   "pytest>=8.0",

@@ -40,7 +40,7 @@ An embedding identity change tombstones the prior vector lifecycle even when eve
 Apply sequence:
 
 1. Validate current config, generation, root, and absence of another pending migration.
-2. Write a durable journal beside the config.
+2. Write and fsync a recovery journal beside the config.
 3. Resolve cache hits and provider work.
 4. Publish one new SQLite generation.
 5. Atomically write the target TOML.
@@ -48,6 +48,8 @@ Apply sequence:
 7. Remove the pending journal.
 
 The receipt is checksummed for corruption detection. It is not an authenticated audit record.
+
+Journal and receipt publication requires a filesystem that supports hard-link creation within a directory. Configuration publication requires atomic replacement within its directory. Steadlith creates each temporary file beside its destination; filesystems that do not provide these operations are unsupported and cause migration apply or recovery to fail with a storage error. Parent directories are not explicitly fsynced, so sudden-power-loss durability of directory entries depends on the operating system and filesystem.
 
 ## Recover an interrupted migration
 
@@ -64,6 +66,8 @@ Recovery checks the journal against config and database state:
 - If state is neither recognized version, it refuses to guess.
 
 Do not delete the journal manually. Preserve the database, config, and journal together for diagnosis.
+
+Complete or abort recovery before relocating a project. A pending journal records resolved config, database, and receipt paths, and recovery requires the same resolved config path.
 
 ## Roll back the current migration
 
@@ -91,7 +95,7 @@ If source content changed, restore the corresponding source revision before roll
 
 ## Adopt a 0.2 project
 
-Steadlith 0.3 preserves the v1 chunk and embedding identity wire format from Cairn 0.2. Adopt configuration explicitly:
+Steadlith 1.0 preserves the v1 chunk and embedding identity wire format from Cairn 0.2. Adopt configuration explicitly:
 
 ```bash
 steadlith adopt --from-config cairn.toml --config steadlith.toml

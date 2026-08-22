@@ -19,7 +19,7 @@ The embedding provider and model are intentionally outside the chunk hash. They 
 
 Golden-vector tests pin the default parameter hash and a representative chunk hash. A future incompatible algorithm must use a new normalizer, boundary-rule, parameter, or identity version. It must not reinterpret v1 data.
 
-Steadlith 0.3 keeps the v1 chunk, Merkle, record, and hash wire domains from Cairn 0.2 byte-for-byte. Some stored identifiers therefore retain the former name. These values are isolated as immutable compatibility data. They are not package, module, command, configuration-file, or state-directory names. Renaming them would change hashes and invalidate existing indexes and cached embeddings.
+Steadlith 1.0 keeps the v1 chunk, Merkle, record, and hash wire domains from Cairn 0.2 byte-for-byte. Some stored identifiers therefore retain the former name. These values are isolated as immutable compatibility data. They are not package, module, command, configuration-file, or state-directory names. Renaming them would change hashes and invalidate existing indexes and cached embeddings.
 
 ## Configuration and migrations
 

@@ -98,7 +98,7 @@ def _init(args: argparse.Namespace, console: Console) -> int:
             {
                 "created": str(path),
                 "backend": "sqlite",
-                "next": "edit the sources table, then run steadlith plan",
+                "next": "review the sources table, then run steadlith plan",
             },
             console=console,
         )
@@ -106,7 +106,9 @@ def _init(args: argparse.Namespace, console: Console) -> int:
         console.print(
             Text.assemble("Created ", (str(path), "bold"), " with the offline SQLite backend.")
         )
-        console.print("Edit the [bold]sources[/bold] table, then run [bold]steadlith plan[/bold].")
+        console.print(
+            "Review the [bold]sources[/bold] table, then run [bold]steadlith plan[/bold]."
+        )
     return int(ExitCode.SUCCESS)
 
 
@@ -143,7 +145,7 @@ def _index(args: argparse.Namespace, console: Console) -> int:
     if config.embedding.provider != "hash" and not args.allow_network:
         raise ConfigError(
             "This provider may use the network or download code/models; rerun index with "
-            "--allow-network after reviewing steadlith.toml and the source scope"
+            f"--allow-network after reviewing {args.config} and the source scope"
         )
     prepared = prepare_index(config, args.paths)
     deletes = prepared.plan.counts[OperationKind.DELETE]
@@ -171,36 +173,11 @@ def _index(args: argparse.Namespace, console: Console) -> int:
 
 
 def _status(args: argparse.Namespace, console: Console) -> int:
-    config = _config(args)
-    status = index_status(config)
-    pending = prepare_index(config).plan
-    drift = pending.changed and not (status.corpus_root is None and pending.new_chunks == 0)
-    changed_operations = sum(
-        count for kind, count in pending.counts.items() if kind is not OperationKind.KEEP
-    )
-    source_drift = changed_operations > 0
-    embedding_drift = drift and pending.cost.naive_chunks_to_embed > 0 and not source_drift
+    status = index_status(_config(args))
     if args.json:
-        payload = _status_dict(status)
-        payload["index_drift"] = drift
-        payload["source_drift"] = source_drift
-        payload["embedding_drift"] = embedding_drift
-        payload["pending_operations"] = {
-            kind.value: count for kind, count in pending.counts.items()
-        }
-        payload["pending_embeddings"] = pending.cost.chunks_to_embed
-        json_output(payload, console=console)
+        json_output(_status_dict(status), console=console)
     else:
         render_status(status, console=console)
-        if drift:
-            label = "Embedding configuration drift" if embedding_drift else "Index drift detected"
-            console.print(
-                f"[yellow]{label}:[/yellow] {changed_operations:,} changed chunk operations, "
-                f"{pending.cost.chunks_to_embed:,} embeddings needed. "
-                "Run [bold]steadlith plan[/bold] for details."
-            )
-        else:
-            console.print("[green]Sources and embedding configuration match the index.[/green]")
     return int(ExitCode.SUCCESS)
 
 
@@ -209,7 +186,7 @@ def _query(args: argparse.Namespace, console: Console) -> int:
     if config.embedding.provider != "hash" and not args.allow_network:
         raise ConfigError(
             "This provider may use the network or download code/models; rerun query with "
-            "--allow-network after reviewing steadlith.toml"
+            f"--allow-network after reviewing {args.config}"
         )
     matches = list(query_index(config, args.text, limit=args.limit))
     if args.json:
@@ -443,7 +420,10 @@ def _churn(args: argparse.Namespace, console: Console) -> int:
     if args.strategy:
         unknown = sorted(set(args.strategy) - set(strategies))
         if unknown:
-            raise ConfigError(f"Unknown benchmark strategy: {', '.join(unknown)}")
+            raise ConfigError(
+                f"Unknown benchmark strategy: {', '.join(unknown)}. "
+                f"Choose from: {', '.join(sorted(strategies))}"
+            )
         strategies = {name: strategies[name] for name in args.strategy}
     corpora = [get_corpus(name) for name in args.corpus] if args.corpus else None
     operations = [EditOperation(name) for name in args.edit] if args.edit else None
@@ -475,7 +455,10 @@ def _retrieval(args: argparse.Namespace, console: Console) -> int:
     if args.strategy:
         unknown = sorted(set(args.strategy) - set(strategies))
         if unknown:
-            raise ConfigError(f"Unknown benchmark strategy: {', '.join(unknown)}")
+            raise ConfigError(
+                f"Unknown benchmark strategy: {', '.join(unknown)}. "
+                f"Choose from: {', '.join(sorted(strategies))}"
+            )
         strategies = {name: strategies[name] for name in args.strategy}
     corpora = [get_corpus(name) for name in args.corpus] if args.corpus else None
     kwargs: dict[str, Any] = {
@@ -556,7 +539,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     index.set_defaults(handler=_index)
 
-    status = subparsers.add_parser("status", parents=[common], help="show durable index state")
+    status = subparsers.add_parser(
+        "status",
+        parents=[common],
+        help="show committed index state",
+        description=(
+            "Show committed index state without reading configured sources. "
+            "Run 'steadlith plan' to compare current sources or embedding configuration."
+        ),
+    )
     status.set_defaults(handler=_status)
 
     query = subparsers.add_parser("query", parents=[common], help="retrieve active chunks")

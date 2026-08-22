@@ -7,6 +7,14 @@ from dataclasses import dataclass, field
 from typing import Any, overload
 
 
+def is_hard_cut(metadata: Mapping[str, Any]) -> bool:
+    return bool(
+        metadata.get("hard_cut")
+        or metadata.get("boundary_reason") in {"hard-cut", "hard_max", "max"}
+        or metadata.get("boundary_kind") == "hard"
+    )
+
+
 @dataclass
 class Chunk:
     """A text chunk compatible with LangChain's ``Document`` shape.
@@ -18,6 +26,13 @@ class Chunk:
 
     page_content: str
     metadata: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.page_content, str):
+            raise TypeError("page_content must be a string")
+        if not isinstance(self.metadata, Mapping):
+            raise TypeError("metadata must be a mapping")
+        self.metadata = dict(self.metadata)
 
     @property
     def text(self) -> str:

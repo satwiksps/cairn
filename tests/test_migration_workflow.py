@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -57,6 +58,22 @@ exclude = []
     )
     assert main(["index", "--config", str(config), "--json"]) == ExitCode.SUCCESS
     return config
+
+
+def _leave_committed_migration_pending(config_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    migration = prepare_migration(config_path, overrides={"embedding.model": "test-hash-v2"})
+    real_recovery = workflow.recover_pending_migration
+
+    def interrupted_recovery(_path: str | Path) -> workflow.RecoveryResult:
+        raise ConfigError("simulated process interruption before config publication")
+
+    monkeypatch.setattr(workflow, "recover_pending_migration", interrupted_recovery)
+    with pytest.raises(ConfigError, match="simulated process interruption"):
+        apply_migration(migration)
+    monkeypatch.setattr(workflow, "recover_pending_migration", real_recovery)
+    journal = pending_migration_path(config_path)
+    assert journal.exists()
+    return journal
 
 
 def test_model_migration_persists_config_history_and_rolls_back(tmp_path: Path) -> None:
@@ -328,6 +345,41 @@ def test_recovery_finishes_config_after_committed_index(
     assert verify_index(load_config(config_path)) == (True, ())
 
 
+def test_recovery_rejects_tampered_journal_receipt_metadata(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config_path = _project(tmp_path)
+    journal = _leave_committed_migration_pending(config_path, monkeypatch)
+    payload = json.loads(journal.read_text(encoding="utf-8"))
+    payload["receipt"]["migration_id"] = "tampered-migration-id"
+    journal.write_text(json.dumps(payload), encoding="utf-8")
+
+    with pytest.raises(ConfigError, match="journal and receipt metadata do not agree"):
+        recover_pending_migration(config_path)
+
+    assert journal.exists()
+    with pytest.raises(ConfigError, match="pending migration journal"):
+        load_config(config_path)
+
+
+def test_recovery_preserves_journal_after_concurrent_config_edit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config_path = _project(tmp_path)
+    indexed_config = load_config(config_path)
+    before_generation = index_status(indexed_config).generation
+    journal = _leave_committed_migration_pending(config_path, monkeypatch)
+    concurrent_text = config_path.read_text(encoding="utf-8") + "\n# concurrent operator edit\n"
+    config_path.write_text(concurrent_text, encoding="utf-8")
+
+    with pytest.raises(ConfigError, match="edited concurrently"):
+        recover_pending_migration(config_path)
+
+    assert index_status(indexed_config).generation == before_generation + 1
+    assert config_path.read_text(encoding="utf-8") == concurrent_text
+    assert journal.exists()
+
+
 def test_recover_rejects_all_planning_options(tmp_path: Path) -> None:
     config_path = _project(tmp_path)
     assert (
@@ -363,6 +415,32 @@ def test_failed_apply_clears_journal_and_keeps_original_state(
     assert not pending_migration_path(config_path).exists()
     assert config_path.read_text(encoding="utf-8") == before_text
     assert index_status(load_config(config_path)) == before_status
+
+
+def test_migration_mirror_failure_is_repaired_by_a_noop_index(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    config_path = _project(tmp_path)
+    migration = prepare_migration(config_path, overrides={"chunker.max_tokens": 20})
+    write_snapshot = index_service._write_manifest_snapshot
+
+    def fail_snapshot(*args: object, **kwargs: object) -> None:
+        raise BackendError("simulated mirror publication failure")
+
+    monkeypatch.setattr(index_service, "_write_manifest_snapshot", fail_snapshot)
+    with pytest.raises(BackendError, match="simulated mirror publication failure"):
+        apply_migration(migration)
+
+    migrated = load_config(config_path)
+    assert migrated.chunker.max_tokens == 20
+    assert not pending_migration_path(config_path).exists()
+    valid, issues = verify_index(migrated)
+    assert not valid
+    assert any("manifest mirror" in issue.lower() for issue in issues)
+
+    monkeypatch.setattr(index_service, "_write_manifest_snapshot", write_snapshot)
+    assert main(["index", "--config", str(config_path), "--json"]) == ExitCode.SUCCESS
+    assert verify_index(migrated) == (True, ())
 
 
 def test_rollback_refuses_sources_that_no_longer_reproduce_old_root(tmp_path: Path) -> None:

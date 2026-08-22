@@ -24,7 +24,7 @@ SQLite state
 : Contains source text, metadata, vectors, and history. Steadlith validates schema and record integrity but does not encrypt files or authenticate local writers outside operating-system permissions.
 
 Migration receipts
-: Have checksums for corruption detection. They are not signed audit records.
+: Have checksums for corruption detection. They are not signed audit records. Journals and receipts contain full before/after TOML and resolved local paths; treat them as private project state and redact them before sharing.
 
 ## Operator checklist
 

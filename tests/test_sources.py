@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from pathlib import Path
 
 import pytest
@@ -89,3 +90,20 @@ def test_source_change_during_read_is_rejected(
     monkeypatch.setattr(Path, "read_bytes", changing_read)
     with pytest.raises(SteadlithError, match="changed while it was being read"):
         load_source(source, base_dir=tmp_path)
+
+
+def test_relocated_source_keeps_project_relative_metadata(tmp_path: Path) -> None:
+    original = tmp_path / "original"
+    relocated = tmp_path / "relocated"
+    source_path = original / "docs" / "guide.md"
+    relocated_path = relocated / "docs" / "guide.md"
+    source_path.parent.mkdir(parents=True)
+    relocated_path.parent.mkdir(parents=True)
+    source_path.write_text("stable source", encoding="utf-8")
+    shutil.copy2(source_path, relocated_path)
+
+    source = load_source(source_path, base_dir=original)
+    moved = load_source(relocated_path, base_dir=relocated)
+
+    assert source.metadata == moved.metadata
+    assert source.metadata["path"] == "docs/guide.md"

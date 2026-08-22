@@ -206,8 +206,15 @@ export default function Home() {
               </div>
               <pre>
                 <code>
-                  <span className="code-muted"># create a local configuration</span>{"\n"}
-                  <span className="code-command">steadlith init</span>{"\n\n"}
+                  <span className="code-muted"># create a disposable project</span>{"\n"}
+                  <span className="code-command">mkdir steadlith-demo</span>{"\n"}
+                  <span className="code-command">cd steadlith-demo</span>{"\n"}
+                  <span className="code-command">steadlith init</span>{"\n"}
+                  <span className="code-command">
+                    {
+                      "python -c \"from pathlib import Path; Path('docs').mkdir(exist_ok=True); Path('docs/example.md').write_text('# Notes\\n\\nRelease policy keeps changes reviewable.\\n', encoding='utf-8')\""
+                    }
+                  </span>{"\n\n"}
                   <span className="code-muted"># inspect before any write</span>{"\n"}
                   <span className="code-command">steadlith plan</span>{"\n\n"}
                   <span className="code-command">steadlith index</span>{"\n"}
@@ -258,8 +265,8 @@ export default function Home() {
             <p className="section-label">CURRENT SUPPORT</p>
             <h2>A deliberately narrow supported core.</h2>
             <p>
-              The reference path is implemented end to end. Additional backends are not presented
-              as supported until they pass the shared adapter conformance suite.
+              The repository tests the local SQLite path. No additional vector backend is
+              implemented or supported.
             </p>
           </div>
 

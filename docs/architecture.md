@@ -2,7 +2,7 @@
 
 ## Status and intent
 
-This document defines Steadlith's architectural boundaries. The implemented `0.x` surface is intentionally limited and names may change. The purity, identity, and deletion constraints below are design invariants rather than optional conventions.
+This document defines Steadlith's architectural boundaries. The 1.x surface is intentionally limited; documented compatibility guarantees are defined in the compatibility policy. The purity, identity, and deletion constraints below are design invariants rather than optional conventions.
 
 ## System shape
 
@@ -104,13 +104,13 @@ Planning is referentially transparent for fixed inputs. It reads two manifest va
 
 Applying validates that the plan's expected old root still matches current state, resolves cache hits, embeds missing content, stages vector operations, commits index changes, and finally advances durable manifest state. A crash must leave either the old committed state or a resumable staged state, never an apparently successful partial state.
 
-The local cache commits each completed provider batch, so a later crash resumes from those commits. There remains an unavoidable acceptance-to-cache window: if a provider accepted a request and the process dies before the cache commit, a retry can be billed again. Strict no-duplicate-spend behavior requires a provider-supported idempotency key and is not claimed by the current provider interface. Backend-specific behavior belongs behind adapters and must pass the shared conformance suite.
+The local cache commits each completed provider batch, so a later crash resumes from those commits. There remains an unavoidable acceptance-to-cache window: if a provider accepted a request and the process dies before the cache commit, a retry can be billed again. Strict no-duplicate-spend behavior requires a provider-supported idempotency key and is not claimed by the current provider interface. Backend-specific behavior belongs behind adapters and requires backend-specific tests before support is claimed.
 
 ## Deletion model
 
 Logical deletion precedes physical deletion. Each indexed occurrence carries `valid_from` and optional `valid_to`; normal query paths select only active records. `compact` may physically remove expired tombstones later.
 
-Metadata-filtering capability is therefore part of the adapter contract. An adapter that cannot guarantee active-record filtering must advertise degraded mode and use a documented physical-delete path with a prominent warning. See [adapter conformance](adapter-conformance.md).
+Active-record filtering is therefore required of any supported adapter. See the current [adapter status](adapter-conformance.md).
 
 ## Configuration boundary
 

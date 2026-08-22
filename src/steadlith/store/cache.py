@@ -16,6 +16,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from steadlith._sqlite_values import decode_vector, find_blocking_parent
+from steadlith._sqlite_values import encode_vector as _encode_vector
+from steadlith._sqlite_values import utc_now as _now
 from steadlith.errors import BackendError
 
 SCHEMA_VERSION = 1
@@ -24,25 +27,13 @@ MAX_IMPORT_LINE_BYTES = 4 * 1024 * 1024
 MAX_VECTOR_DIMENSIONS = 65_536
 
 
-def _now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="microseconds")
-
-
-def _encode_vector(vector: Sequence[float]) -> bytes:
-    if not vector:
-        return b""
-    return struct.pack(f"<{len(vector)}f", *(float(value) for value in vector))
-
-
 def _decode_vector(payload: bytes, dimensions: int) -> tuple[float, ...]:
-    if dimensions == 0:
-        return ()
     expected = dimensions * 4
-    if len(payload) != expected:
-        raise BackendError(
-            f"Corrupt cached vector: expected {expected} bytes, found {len(payload)}"
-        )
-    return tuple(struct.unpack(f"<{dimensions}f", payload))
+    return decode_vector(
+        payload,
+        dimensions,
+        corrupt_message=f"Corrupt cached vector: expected {expected} bytes, found {len(payload)}",
+    )
 
 
 @dataclass(frozen=True)
@@ -69,13 +60,30 @@ class Cache:
     """
 
     def __init__(self, path: str | Path, *, readonly: bool = False) -> None:
-        self.path = Path(path).expanduser().resolve()
+        requested_path = Path(path).expanduser()
+        try:
+            self.path = requested_path.resolve()
+            blocking_path = find_blocking_parent(self.path)
+            if blocking_path is not None:
+                raise BackendError(
+                    f"Could not prepare embedding cache path {requested_path}: "
+                    f"{blocking_path} blocks the path. Rename the blocking file or configure "
+                    "store.cache to use another path."
+                )
+            if not readonly:
+                self.path.parent.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            blocking_path = exc.filename or requested_path
+            raise BackendError(
+                f"Could not prepare embedding cache path {requested_path}: "
+                f"{blocking_path} blocks the path. Rename the blocking file or configure "
+                "store.cache to use another path."
+            ) from exc
         self.readonly = readonly
         self._lock = threading.RLock()
         if readonly:
             self._connection = self._open_readonly()
         else:
-            self.path.parent.mkdir(parents=True, exist_ok=True)
             try:
                 self._connection = sqlite3.connect(
                     str(self.path), timeout=30, check_same_thread=False

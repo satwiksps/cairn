@@ -11,7 +11,7 @@ Commands that use project state accept `-c PATH`/`--config PATH`. Reporting comm
 
 ## Corpus scope and deletion semantics
 
-For `plan`, `index`, and migration previews, positional paths are the **complete desired corpus for that run**. They are not appended to the existing index. Migration applies, including rollback apply, reject positional paths: a durable migration always uses the `[sources]` scope that remains in `steadlith.toml`, preventing an immediately drifting index.
+For `plan`, `index`, and migration previews, positional paths are the **complete desired corpus for that run**. They are not appended to the existing index. Migration applies, including rollback apply, reject positional paths: an applied migration always uses the `[sources]` scope that remains in `steadlith.toml`, preventing an immediately drifting index.
 
 - With no positional paths, Steadlith discovers files from `[sources].include` in `steadlith.toml`.
 - A positional file is read directly; a positional directory is searched recursively.
@@ -67,7 +67,7 @@ Networked providers require `--allow-network`; this covers OpenAI requests and m
 steadlith status [-c PATH] [--json]
 ```
 
-Reports the committed corpus root, model identity, active/tombstoned counts, and hard-cut diagnostics. JSON output also includes the state generation and embedding-parameters hash. The command re-plans configured sources to report source drift and pending operation counts.
+Reports the committed corpus root, model identity, active/tombstoned counts, and hard-cut diagnostics. JSON output also includes the state generation and embedding-parameters hash. The command does not read configured sources. Run `steadlith plan` to compare current sources or embedding configuration with the committed index.
 
 ### `query`
 
@@ -85,7 +85,7 @@ Networked providers require `--allow-network`. The built-in hash provider suppor
 steadlith verify [-c PATH] [--json]
 ```
 
-Checks the durable manifest and active SQLite records for consistency. A mismatch is reported with exit code 2.
+Checks the authoritative SQLite manifest and active records for consistency, then requires the JSON mirror to exist, parse, and equal that manifest. A mismatch is reported with exit code 2.
 
 ### `compact`
 
@@ -117,7 +117,7 @@ Supported chunker values are `cdc-rabin`, `cdc-rabin+snap`, `fixed`, `recursive`
 
 An approved migration embeds through the normal resumable cache and publishes one generation through the SQLite transaction and generation check. It then atomically replaces `steadlith.toml`, preserving unrelated comments and settings, and writes a checksummed receipt to the database-namespaced `<database>.migrations/` folder. Old active rows become tombstones rather than being overwritten.
 
-A small durable journal beside `steadlith.toml` closes the SQLite/config crash window. While a journal exists, ordinary CLI commands and library config loads fail closed without changing it; run `migrate --recover` explicitly. Recovery finalizes config when the target generation committed or clears the stage when SQLite remained at the old generation. It refuses to guess if the database, journal, or config was edited into a third state.
+An fsynced recovery journal beside `steadlith.toml` closes the SQLite/config process-crash window. While a journal exists, ordinary CLI commands and library config loads fail closed without changing it; run `migrate --recover` explicitly. Recovery finalizes config when the target generation committed or clears the stage when SQLite remained at the old generation. It refuses to guess if the database, journal, or config was edited into a third state.
 
 `--rollback` previews the inverse of the immediately current migration receipt. With `--apply`, rollback creates a new generation and tombstones the migrated rows; it does not rewrite database history. Rollback is refused after another index generation or config edit, and the current sources must reproduce the receipt's pre-migration corpus root. Restore the corresponding source revision first when they do not. Provider calls may be needed if the old embedding cache was pruned.
 

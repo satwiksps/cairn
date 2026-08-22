@@ -6,7 +6,6 @@ import heapq
 import json
 import math
 import sqlite3
-import struct
 import threading
 from collections.abc import Iterable, Mapping, Sequence
 from datetime import datetime, timezone
@@ -14,6 +13,9 @@ from pathlib import Path
 from typing import Any
 
 from steadlith._legacy_wire import V1_INDEX_RECORD_DOMAIN
+from steadlith._sqlite_values import decode_vector, find_blocking_parent
+from steadlith._sqlite_values import encode_vector as _encode_vector
+from steadlith._sqlite_values import utc_now as _now
 from steadlith.config import MAX_VECTOR_DIMENSIONS
 from steadlith.content.hashing import chunk_content_hash, hash_fields
 from steadlith.content.manifest import CorpusManifest
@@ -24,26 +26,17 @@ from steadlith.index.adapters.base import (
     IndexStatus,
     VectorMatch,
 )
+from steadlith.models import is_hard_cut
 
 SCHEMA_VERSION = 2
 
 
-def _now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="microseconds")
-
-
-def _encode_vector(vector: Sequence[float]) -> bytes:
-    if not vector:
-        return b""
-    return struct.pack(f"<{len(vector)}f", *(float(value) for value in vector))
-
-
 def _decode_vector(payload: bytes, dimensions: int) -> tuple[float, ...]:
-    if dimensions == 0:
-        return ()
-    if len(payload) != dimensions * 4:
-        raise BackendError("The index contains a corrupt vector payload")
-    return tuple(struct.unpack(f"<{dimensions}f", payload))
+    return decode_vector(
+        payload,
+        dimensions,
+        corrupt_message="The index contains a corrupt vector payload",
+    )
 
 
 def _cosine(left: Sequence[float], right: Sequence[float]) -> float:
@@ -127,14 +120,31 @@ class SQLiteIndex:
     supports_metadata_filtering = True
 
     def __init__(self, path: str | Path, *, readonly: bool = False) -> None:
-        self.path = Path(path).expanduser().resolve()
+        requested_path = Path(path).expanduser()
+        try:
+            self.path = requested_path.resolve()
+            blocking_path = find_blocking_parent(self.path)
+            if blocking_path is not None:
+                raise BackendError(
+                    f"Could not prepare SQLite index path {requested_path}: "
+                    f"{blocking_path} blocks the path. Rename the blocking file or configure "
+                    "index.database to use another path."
+                )
+            if not readonly:
+                self.path.parent.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            blocking_path = exc.filename or requested_path
+            raise BackendError(
+                f"Could not prepare SQLite index path {requested_path}: "
+                f"{blocking_path} blocks the path. Rename the blocking file or configure "
+                "index.database to use another path."
+            ) from exc
         self.readonly = readonly
         self._lock = threading.RLock()
         self._connection: sqlite3.Connection | None
         if readonly:
             self._connection = self._open_readonly()
         else:
-            self.path.parent.mkdir(parents=True, exist_ok=True)
             try:
                 self._connection = sqlite3.connect(
                     str(self.path), timeout=30, check_same_thread=False
@@ -804,11 +814,7 @@ class SQLiteIndex:
                     if int(actual_document["chunk_count"]) != len(expected_document.chunks):
                         problems.append(f"document {document_id!r} chunk count differs")
                     expected_hard_cuts = sum(
-                        1
-                        for chunk in expected_document.chunks
-                        if bool(chunk.metadata.get("hard_cut"))
-                        or chunk.metadata.get("boundary_reason") in {"hard-cut", "hard_max", "max"}
-                        or chunk.metadata.get("boundary_kind") == "hard"
+                        is_hard_cut(chunk.metadata) for chunk in expected_document.chunks
                     )
                     if int(actual_document["hard_cuts"]) != expected_hard_cuts:
                         problems.append(f"document {document_id!r} hard-cut count differs")

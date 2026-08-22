@@ -83,14 +83,18 @@ class ChunkerConfig:
     def validate(self) -> None:
         if not isinstance(self.strategy, str):
             raise ConfigError("chunker.strategy must be a string")
-        if self.strategy not in {
+        accepted_strategies = (
             "cdc-rabin",
             "cdc-rabin+snap",
             "fixed",
             "recursive",
             "semantic",
-        }:
-            raise ConfigError(f"Unknown chunking strategy: {self.strategy!r}")
+        )
+        if self.strategy not in accepted_strategies:
+            accepted = ", ".join(accepted_strategies)
+            raise ConfigError(
+                f"Unknown chunking strategy: {self.strategy!r}. Accepted values: {accepted}"
+            )
         integer_fields = {
             "window_words": self.window_words,
             "min_tokens": self.min_tokens,
@@ -125,8 +129,12 @@ class EmbeddingConfig:
     def validate(self) -> None:
         if not isinstance(self.provider, str):
             raise ConfigError("embedding.provider must be a string")
-        if self.provider not in {"hash", "openai", "sentence-transformers"}:
-            raise ConfigError(f"Unknown embedding provider: {self.provider!r}")
+        accepted_providers = ("hash", "openai", "sentence-transformers")
+        if self.provider not in accepted_providers:
+            accepted = ", ".join(accepted_providers)
+            raise ConfigError(
+                f"Unknown embedding provider: {self.provider!r}. Accepted values: {accepted}"
+            )
         if not isinstance(self.model, str):
             raise ConfigError("embedding.model must be a string")
         if not self.model.strip():

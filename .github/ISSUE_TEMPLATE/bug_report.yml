@@ -26,7 +26,7 @@ body:
     attributes:
       label: Steadlith version
       description: Output of `steadlith --version`, installed package version, or commit SHA.
-      placeholder: 0.3.0 or commit SHA
+      placeholder: 1.0.0 or commit SHA
     validations:
       required: true
 

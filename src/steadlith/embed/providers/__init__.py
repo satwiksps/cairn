@@ -5,7 +5,6 @@ from __future__ import annotations
 from steadlith.config import EmbeddingConfig
 from steadlith.embed.base import EmbeddingProvider
 from steadlith.embed.providers.hash import HashEmbeddingProvider
-from steadlith.errors import ConfigError
 
 
 def create_provider(config: EmbeddingConfig) -> EmbeddingProvider:
@@ -21,13 +20,11 @@ def create_provider(config: EmbeddingConfig) -> EmbeddingProvider:
             api_key_env=config.api_key_env or "OPENAI_API_KEY",
             base_url=config.base_url,
         )
-    if config.provider == "sentence-transformers":
-        from steadlith.embed.providers.sentence_transformers import (
-            SentenceTransformersProvider,
-        )
+    from steadlith.embed.providers.sentence_transformers import (
+        SentenceTransformersProvider,
+    )
 
-        return SentenceTransformersProvider(model=config.model, dimensions=config.dimensions)
-    raise ConfigError(f"Unknown embedding provider: {config.provider!r}")
+    return SentenceTransformersProvider(model=config.model, dimensions=config.dimensions)
 
 
 __all__ = ["HashEmbeddingProvider", "create_provider"]

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 import time
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 
 from steadlith.embed.base import EmbeddingProvider
@@ -107,7 +107,6 @@ def embed_with_cache(
     provider: EmbeddingProvider,
     batch_size: int = 64,
     max_retries: int = 3,
-    on_batch: Callable[[int, int], None] | None = None,
 ) -> BatchResult:
     """Resolve unique chunks cache-first and persist each completed provider batch.
 
@@ -170,7 +169,6 @@ def embed_with_cache(
             vectors[record.chunk_hash] = vector
     cache_hits = len(vectors)
     embedded_tokens = 0
-    completed = 0
     for batch in _batches(missing, batch_size):
         new_vectors = embed_texts(
             [record.text for record in batch],
@@ -200,9 +198,6 @@ def embed_with_cache(
         for record, vector in zip(batch, new_vectors, strict=True):
             vectors[record.chunk_hash] = vector
             embedded_tokens += record.token_count
-        completed += len(batch)
-        if on_batch is not None:
-            on_batch(completed, len(missing))
     return BatchResult(
         vectors=vectors,
         cache_hits=cache_hits,

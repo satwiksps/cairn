@@ -68,7 +68,7 @@ The index assigns a generation-scoped instance ID using document, position, chun
 
 ## Stability contract
 
-The v1 identity schema is frozen by golden-vector tests. Steadlith 0.3 preserves stored v1 domains from Cairn 0.2 so existing indexes and paid cache entries remain usable after explicit configuration adoption.
+The v1 identity schema is frozen by golden-vector tests. Steadlith 1.0 preserves stored v1 domains from Cairn 0.2 so existing indexes and paid cache entries remain usable after explicit configuration adoption.
 
 Some persisted metadata therefore contains an earlier internal wire identifier. It is immutable compatibility data, not an active package, command, configuration, or state-directory name.
 

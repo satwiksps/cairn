@@ -6,9 +6,9 @@ from typing import NoReturn
 
 import pytest
 
-from steadlith.embed.batch import EmbeddingInput, embed_with_cache
+from steadlith.embed.batch import EmbeddingInput, embed_texts, embed_with_cache
 from steadlith.embed.providers.hash import HashEmbeddingProvider
-from steadlith.errors import BackendError, ProviderError
+from steadlith.errors import BackendError, ProviderError, TransientProviderError
 from steadlith.store import Cache
 
 
@@ -147,3 +147,69 @@ def test_permanent_provider_errors_are_not_retried(tmp_path: Path) -> None:
                 max_retries=5,
             )
     assert provider.calls == 1
+
+
+class TransientThenSuccessProvider:
+    model_id = "test:transient"
+    params_hash = "params"
+    dimensions = 1
+
+    def __init__(self, failures: int) -> None:
+        self.failures = failures
+        self.calls = 0
+
+    def embed(self, texts: Sequence[str]) -> list[tuple[float, ...]]:
+        self.calls += 1
+        if self.calls <= self.failures:
+            raise TransientProviderError("retryable failure")
+        return [(float(index),) for index, _text in enumerate(texts)]
+
+
+def test_transient_provider_errors_retry_until_success(monkeypatch: pytest.MonkeyPatch) -> None:
+    provider = TransientThenSuccessProvider(failures=2)
+    delays: list[float] = []
+    monkeypatch.setattr("steadlith.embed.batch.time.sleep", delays.append)
+
+    assert embed_texts(["text"], provider=provider, max_retries=2) == [(0.0,)]
+    assert provider.calls == 3
+    assert delays == [1, 2]
+
+
+def test_transient_provider_errors_stop_after_retry_limit(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    provider = TransientThenSuccessProvider(failures=3)
+    delays: list[float] = []
+    monkeypatch.setattr("steadlith.embed.batch.time.sleep", delays.append)
+
+    with pytest.raises(TransientProviderError, match="retryable failure"):
+        embed_texts(["text"], provider=provider, max_retries=2)
+    assert provider.calls == 3
+    assert delays == [1, 2]
+
+
+class StaticResponseProvider:
+    model_id = "test:static"
+    params_hash = "params"
+    dimensions = 1
+
+    def __init__(self, vectors: list[tuple[float, ...]]) -> None:
+        self.vectors = vectors
+
+    def embed(self, texts: Sequence[str]) -> list[tuple[float, ...]]:
+        del texts
+        return self.vectors
+
+
+@pytest.mark.parametrize("vectors", [[], [(1.0,), (2.0,)]])
+def test_provider_vector_count_must_match_input_count(
+    vectors: list[tuple[float, ...]],
+) -> None:
+    with pytest.raises(ProviderError, match=r"returned \d+ vectors for 1 inputs"):
+        embed_texts(["text"], provider=StaticResponseProvider(vectors))
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_provider_vectors_must_be_finite(value: float) -> None:
+    with pytest.raises(ProviderError, match="non-finite vector"):
+        embed_texts(["text"], provider=StaticResponseProvider([(value,)]))
