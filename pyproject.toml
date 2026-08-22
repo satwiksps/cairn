@@ -113,5 +113,5 @@ mypy_path = "src"
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
-module = ["openai", "sentence_transformers", "tomllib"]
+module = ["openai", "sentence_transformers", "tomli", "tomllib"]
 ignore_missing_imports = true
