@@ -82,20 +82,24 @@ jobs:
 
       - name: Install and smoke-test the built wheel
         run: |
-          python -m pip install --force-reinstall dist/*.whl
-          python -m pip check
-          python -c "import steadlith"
-          python -m steadlith --version
-          steadlith --version
+          wheel_venv="$(mktemp -d)"
+          python -m venv "$wheel_venv"
+          wheel_python="$wheel_venv/bin/python"
+          wheel_cli="$wheel_venv/bin/steadlith"
+          "$wheel_python" -m pip install --no-cache-dir dist/*.whl
+          "$wheel_python" -m pip check
+          "$wheel_python" -c "import steadlith"
+          "$wheel_python" -m steadlith --version
+          "$wheel_cli" --version
           smoke_dir="$(mktemp -d)"
           cd "$smoke_dir"
-          steadlith init --json > init.json
+          "$wheel_cli" init --json > init.json
           mkdir docs
           printf '%s\n' 'alpha beta gamma delta epsilon' > docs/smoke.md
-          steadlith plan --json > plan.json
-          steadlith index --json > index.json
-          steadlith query 'alpha beta' --json > query.json
-          steadlith verify --json > verify.json
+          "$wheel_cli" plan --json > plan.json
+          "$wheel_cli" index --json > index.json
+          "$wheel_cli" query 'alpha beta' --json > query.json
+          "$wheel_cli" verify --json > verify.json
 
       - name: Attest distributions
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2

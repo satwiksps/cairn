@@ -30,6 +30,7 @@ All notable changes to Steadlith are documented here. The format follows
 - Manifest mirror verification and repair now detect mismatches and preserve a recoverable state after interrupted writes.
 - `compact --dry-run` no longer creates a missing index database.
 - Network-consent errors now report the active project configuration instead of assuming the default file.
+- The release wheel smoke test now runs in an isolated virtual environment instead of altering the documentation environment.
 
 ## [0.3.0] - 2026-08-16
 
